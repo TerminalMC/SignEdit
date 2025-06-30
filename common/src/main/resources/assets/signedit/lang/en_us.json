@@ -1,0 +1,21 @@
+{
+  "signedit.name": "SignEdit",
+
+  "message.framework.viewModrinth": "View on Modrinth",
+  "message.framework.installCloth": "Install Cloth Config API to access mod options",
+
+  "message.signedit.copied": "Text copied from sign!",
+
+  "button.signedit.enhancedEditing": "Enhanced Editing",
+  "button.signedit.copy": "Copy",
+  "button.signedit.insert": "Insert",
+  "button.signedit.erase": "Erase",
+
+  "option.signedit.general": "General",
+  "option.signedit.general.useEnhancedEditor": "Use Enhanced Editor",
+  "option.signedit.general.useEnhancedEditor.tooltip": "Whether enhanced editing should be enabled by default.",
+  "option.signedit.general.showActionButtons": "Show Quick Action Buttons",
+  "option.signedit.general.showActionButtons.tooltip": "Whether to show the quick action buttons in the sign editor.",
+  "option.signedit.general.actionButtonsCloseUi": "Action Buttons Close UI",
+  "option.signedit.general.actionButtonsCloseUi.tooltip": "Whether clicking the quick action buttons should close the sign editor."
+}
