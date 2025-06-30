@@ -1,0 +1,12 @@
+{
+  "sfx.ping": {
+    "sounds": [
+      "framework:sfx/ping"
+    ]
+  },
+  "sfx.winxp_error": {
+    "sounds": [
+      "framework:sfx/winxp_error"
+    ]
+  }
+}
