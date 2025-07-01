@@ -16,6 +16,7 @@
 
 package dev.terminalmc.signedit.helper;
 
+import dev.terminalmc.signedit.SignEdit;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.font.TextFieldHelper;
 import net.minecraft.client.gui.screens.Screen;
@@ -49,7 +50,7 @@ public class FieldHelper extends TextFieldHelper {
                     if (text == null) {
                         String[] arr = getMessage.get();
                         String str = unwrap(arr);
-//                        SignEdit.LOG.warn("unwrapped {} into {}", arrToStr(arr), escaped(str));
+                        SignEdit.LOG.warn("unwrapped {} into {}", arrToStr(arr), escaped(str));
                         text = str;
                     }
                     return text;
@@ -58,7 +59,7 @@ public class FieldHelper extends TextFieldHelper {
                     text = str;
                     String[] arr = wrap(str, getMaxWidth.get(), lineCount);
                     setMessage.accept(arr);
-//                    SignEdit.LOG.warn("wrapped {} into {}", escaped(str), arrToStr(arr));
+                    SignEdit.LOG.warn("wrapped {} into {}", escaped(str), arrToStr(arr));
                 }, getClipboard, setClipboard, (str) -> fits(str, getMaxWidth.get(), lineCount)
         );
         text = null;
@@ -140,12 +141,6 @@ public class FieldHelper extends TextFieldHelper {
         List<String> lines = new ArrayList<>();
 //        String[] rawLines = input.split("\n");
         String[] rawLines = input.split("\n", Integer.MAX_VALUE);
-        if (input.endsWith("\n")) {
-            String[] rawLines2 = new String[rawLines.length + 1];
-            System.arraycopy(rawLines, 0, rawLines2, 0, rawLines.length);
-            rawLines2[rawLines.length] = "";
-            rawLines = rawLines2;
-        }
 
         for (String rawLine : rawLines) {
             wrapLine(rawLine, maxWidth, lines);
@@ -158,12 +153,6 @@ public class FieldHelper extends TextFieldHelper {
         List<String> lines = new ArrayList<>();
 //        String[] rawLines = input.split("\n");
         String[] rawLines = input.split("\n", Integer.MAX_VALUE);
-        if (input.endsWith("\n")) {
-            String[] rawLines2 = new String[rawLines.length + 1];
-            System.arraycopy(rawLines, 0, rawLines2, 0, rawLines.length);
-            rawLines2[rawLines.length] = "";
-            rawLines = rawLines2;
-        }
 
         for (String rawLine : rawLines) {
             wrapLine(rawLine, maxWidth, lines);
