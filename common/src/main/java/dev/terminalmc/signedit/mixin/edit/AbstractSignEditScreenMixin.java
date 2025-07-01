@@ -64,7 +64,7 @@ public abstract class AbstractSignEditScreenMixin extends Screen {
 
     @Shadow
     @Final
-    private SignBlockEntity sign;
+    protected SignBlockEntity sign;
 
     @Shadow
     @Final
