@@ -23,8 +23,10 @@ Enhances the built-in sign editor.
 ### Features
 
 - Automatic line wrapping
-- Manual line breaks
-- Continuous cursor travel
+- Manual line breaks with indicators
+- Continuous cursor travel using arrow keys
+- Stepped travel using home and end keys
+- Multi-line automatic shifting
 - Multi-line selection
 - Multi-line copy and paste
 - Quick-action buttons for copying, replacing and clearing all text

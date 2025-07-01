@@ -26,7 +26,6 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.AbstractSignEditScreen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.block.entity.SignBlockEntity;
-import net.minecraft.world.level.block.entity.SignText;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -48,15 +47,16 @@ public abstract class AbstractSignEditScreenMixin extends Screen {
     }
 
     @Shadow
-    private SignText text;
-
-    @Shadow
     @Final
     private String[] messages;
 
     @Shadow
     public abstract void onClose();
 
+    /**
+     * On creation of an {@link AbstractSignEditScreen}, resets the value of
+     * {@link SignEdit#enhancedEditing}.
+     */
     @Inject(
             method = "<init>(Lnet/minecraft/world/level/block/entity/SignBlockEntity;ZZLnet/minecraft/network/chat/Component;)V",
             at = @At("RETURN")
@@ -71,6 +71,9 @@ public abstract class AbstractSignEditScreenMixin extends Screen {
         SignEdit.enhancedEditing = options().useEnhancedEditor;
     }
 
+    /**
+     * Wraps the addition of the 'Done' button to add extra buttons as required by mod config.
+     */
     @WrapOperation(
             method = "init",
             at = @At(
@@ -97,9 +100,9 @@ public abstract class AbstractSignEditScreenMixin extends Screen {
         int spaceY = 2;
         int rowHeight = buttonHeight + spaceY;
         int baseX = width / 2 - 100;
-        int baseY = height / 4 + 144 - rowHeight * rowCount;
-        int movingY = baseY;
+        int movingY = height / 4 + 144 - rowHeight * rowCount;
 
+        // Quick-action buttons
         if (options().showActionButtons) {
             int movingX = baseX;
             int buttonWidth = (totalWidth - spaceX * 2) / 3;
@@ -127,6 +130,7 @@ public abstract class AbstractSignEditScreenMixin extends Screen {
             movingY += rowHeight;
         }
 
+        // Enhanced editor toggle button
         if (options().useEnhancedEditor) {
             CycleButton<Boolean> statusButton = CycleButton.onOffBuilder().create(
                     baseX,
@@ -145,44 +149,66 @@ public abstract class AbstractSignEditScreenMixin extends Screen {
             original.call(instance, statusButton);
         }
 
+        // Add the 'Done' button last.
         return original.call(instance, doneButton);
     }
 
+    /**
+     * Copies the sign text to {@link SignEdit#copiedLines}.
+     */
     @Unique
     private void signEdit$copyText() {
-        if (!signEdit$isEmpty()) {
+        if (signEdit$hasText()) {
             SignEdit.copiedLines = new String[messages.length];
             System.arraycopy(messages, 0, SignEdit.copiedLines, 0, messages.length);
             signEdit$finish();
         }
     }
 
+    /**
+     * Replaces the sign text with {@link SignEdit#copiedLines}.
+     */
     @Unique
     private void signEdit$insertText() {
         if (SignEdit.copiedLines != null) {
-            System.arraycopy(SignEdit.copiedLines, 0, messages, 0, messages.length);
+            System.arraycopy(
+                    SignEdit.copiedLines,
+                    0,
+                    messages,
+                    0,
+                    Math.min(SignEdit.copiedLines.length, messages.length)
+            );
             signEdit$finish();
         }
     }
 
+    /**
+     * Clears the sign text.
+     */
     @Unique
     private void signEdit$eraseText() {
-        if (!signEdit$isEmpty()) {
+        if (signEdit$hasText()) {
             Arrays.fill(messages, "");
             signEdit$finish();
         }
     }
 
+    /**
+     * @return {@code true} if the sign is not empty of text.
+     */
     @Unique
-    private boolean signEdit$isEmpty() {
+    private boolean signEdit$hasText() {
         for (String s : messages) {
             if (!s.isEmpty()) {
-                return false;
+                return true;
             }
         }
-        return true;
+        return false;
     }
 
+    /**
+     * Closes or re-initializes the screen as required by mod config.
+     */
     @Unique
     private void signEdit$finish() {
         if (options().actionButtonsCloseUi) {

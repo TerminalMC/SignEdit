@@ -16,7 +16,6 @@
 
 package dev.terminalmc.signedit.helper;
 
-import dev.terminalmc.signedit.SignEdit;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.font.TextFieldHelper;
 import net.minecraft.client.gui.screens.Screen;
@@ -30,11 +29,11 @@ import java.util.function.Supplier;
 
 public class FieldHelper extends TextFieldHelper {
 
-    private final Supplier<String[]> getLinesFn;
     private final Supplier<String> getMessageFn;
     private final Supplier<Integer> getMaxWidthFn;
     private final int lineCount;
-    public static @Nullable String text;
+
+    public static @Nullable String cachedText = null;
 
     public FieldHelper(
             Supplier<String[]> getMessage,
@@ -46,38 +45,33 @@ public class FieldHelper extends TextFieldHelper {
     ) {
         super(
                 () -> {
-//                    unwrap(getMessage.get());
-                    if (text == null) {
-                        String[] arr = getMessage.get();
-                        String str = unwrap(arr);
-                        SignEdit.LOG.warn("unwrapped {} into {}", arrToStr(arr), escaped(str));
-                        text = str;
-                    }
-                    return text;
-                }, (str) -> {
-//                    setMessage.accept(wrap(str, getMaxWidth.get()))
-                    text = str;
-                    String[] arr = wrap(str, getMaxWidth.get(), lineCount);
-                    setMessage.accept(arr);
-                    SignEdit.LOG.warn("wrapped {} into {}", escaped(str), arrToStr(arr));
-                }, getClipboard, setClipboard, (str) -> fits(str, getMaxWidth.get(), lineCount)
+                    if (cachedText == null)
+                        cachedText = unwrap(getMessage.get());
+                    return cachedText;
+                },
+                (str) -> {
+                    cachedText = str;
+                    setMessage.accept(wrap(str, getMaxWidth.get(), lineCount));
+                },
+                getClipboard,
+                setClipboard,
+                (str) -> fits(str, getMaxWidth.get(), lineCount)
         );
-        text = null;
-        this.getLinesFn = getMessage;
+        // Save an accessible copy of TextFieldHelper#getMessageFn
         this.getMessageFn = () -> {
-            if (text == null) {
-                text = unwrap(getMessage.get());
-            }
-            return text;
+            if (cachedText == null)
+                cachedText = unwrap(getMessage.get());
+            return cachedText;
         };
         this.getMaxWidthFn = getMaxWidth;
         this.lineCount = lineCount;
         this.setCursorToEnd();
     }
 
-    // this is a long line wit
-
-    public boolean newLineBefore(int line) {
+    /**
+     * @return {@code true} if the previous line ends in a manual linebreak.
+     */
+    public boolean linebreakBefore(int line) {
         String text = getMessageFn.get();
         int maxWidth = getMaxWidthFn.get();
         if (line <= 0 || line >= lineCount)
@@ -91,6 +85,9 @@ public class FieldHelper extends TextFieldHelper {
         return false;
     }
 
+    /**
+     * Shifts the cursor to the end of the line.
+     */
     public void cursorToLine(int line) {
         String text = getMessageFn.get();
         int maxWidth = getMaxWidthFn.get();
@@ -103,13 +100,31 @@ public class FieldHelper extends TextFieldHelper {
         }
     }
 
+    /**
+     * Converts an index position in the backend string into a line-and-index position in the
+     * frontend lines.
+     *
+     * @param targetIdx the target index in {@link FieldHelper#cachedText}, in the range
+     *                  {@code 0-}{@link FieldHelper#cachedText}{@code .length()} inclusive.
+     * @return the {@link LinePoint} corresponding to the target index.
+     */
     public LinePoint linePoint(int targetIdx) {
         String text = getMessageFn.get();
         int maxWidth = getMaxWidthFn.get();
         return linePoint(text, wrap(text, maxWidth, lineCount), targetIdx);
     }
 
-    public static LinePoint linePoint(String text, String[] lines, int targetIdx) {
+    /**
+     * Converts an index position in the backend string into a line-and-index position in the
+     * frontend lines.
+     *
+     * @param text      the backend string.
+     * @param lines     the frontend lines.
+     * @param targetIdx the target index in {@link FieldHelper#cachedText}, in the range
+     *                  {@code 0-}{@link FieldHelper#cachedText}{@code .length()} inclusive.
+     * @return the {@link LinePoint} corresponding to the target index.
+     */
+    private static LinePoint linePoint(String text, String[] lines, int targetIdx) {
         int idx = 0;
         for (int line = 0; line < lines.length; line++) {
             for (int point = 0; point <= lines[line].length(); point++) {
@@ -120,7 +135,8 @@ public class FieldHelper extends TextFieldHelper {
                         && String.valueOf(text.charAt(idx - 1)).equals("\n")
                         && idx++ == targetIdx) {
                     return new LinePoint(line + 1, 0);
-                } else if (line > 0
+                } else //noinspection ConstantValue
+                    if (line > 0
                         && point == 0
                         && !String.valueOf(text.charAt(idx - 1)).equals("\n")
                         && point++ > 0
@@ -135,41 +151,48 @@ public class FieldHelper extends TextFieldHelper {
         return new LinePoint(0, 0);
     }
 
-
+    /**
+     * Converts text from frontend lines to a backend string.
+     */
     public static String unwrap(String[] lines) {
         StringBuilder builder = new StringBuilder();
+        // Add manual linebreaks for all lines
         for (String line : lines) {
             builder.append(line);
             builder.append("\n");
         }
         String str = builder.toString();
-        if (!str.isEmpty()) {
-            while (str.endsWith("\n")) {
-                str = str.substring(0, str.length() - 1);
-            }
+        // Remove trailing newlines
+        while (str.endsWith("\n")) {
+            str = str.substring(0, str.length() - 1);
         }
         return str;
     }
 
+    /**
+     * @return {@code true} if the entire string can be displayed within the given parameters.
+     */
     public static boolean fits(String input, int maxWidth, int lineCount) {
+        // Simulate creating frontend lines, then check if they would fit
         List<String> lines = new ArrayList<>();
-//        String[] rawLines = input.split("\n");
-        String[] rawLines = input.split("\n", Integer.MAX_VALUE);
-
-        for (String rawLine : rawLines) {
-            wrapLine(rawLine, maxWidth, lines);
+        for (String rawLine : input.split("\n", Integer.MAX_VALUE)) {
+            addWrapped(rawLine, maxWidth, lines);
         }
-
         return lines.size() <= lineCount;
     }
 
+    /**
+     * Converts text from a backend string to frontend lines.
+     */
     public static String[] wrap(String input, int maxWidth, int lineCount) {
         List<String> lines = new ArrayList<>();
-//        String[] rawLines = input.split("\n");
+
+        // Preserve manual linebreaks
         String[] rawLines = input.split("\n", Integer.MAX_VALUE);
 
+        // Wrap overlength lines
         for (String rawLine : rawLines) {
-            wrapLine(rawLine, maxWidth, lines);
+            addWrapped(rawLine, maxWidth, lines);
         }
 
         // Clamp to size
@@ -179,33 +202,46 @@ public class FieldHelper extends TextFieldHelper {
         while (lines.size() < lineCount) {
             lines.add("");
         }
+
         return lines.toArray(new String[0]);
     }
 
-    private static void wrapLine(String line, int maxWidth, List<String> outputLines) {
+    /**
+     * Wraps the line if it is overlength, then adds it to the list.
+     */
+    private static void addWrapped(String line, int maxWidth, List<String> lines) {
         if (line.isEmpty()) {
-            outputLines.add(line);
+            lines.add(line);
             return;
         }
         int start = 0;
         while (start < line.length()) {
-            int end = findBreakPoint(line, start, maxWidth);
-            outputLines.add(line.substring(start, end));
+            int end = findBreakpoint(line, start, maxWidth);
+            lines.add(line.substring(start, end));
             start = end;
         }
     }
 
-    private static int findBreakPoint(String line, int start, int maxWidth) {
+    /**
+     * Finds an optimal point to break the string when wrapping across multiple lines.
+     *
+     * @param str      the string to search.
+     * @param start    the starting point for the search.
+     * @param maxWidth the maximum allowable width.
+     * @return the optimal breakpoint index.
+     */
+    private static int findBreakpoint(String str, int start, int maxWidth) {
         int end = start;
         int lastGoodBreak = -1;
 
-        while (end < line.length()) {
-            String substr = line.substring(start, end + 1);
-
-            if (getWidth(substr) > maxWidth)
+        // Search the string for a good breakpoint
+        while (end < str.length()) {
+            if (Minecraft.getInstance().font.width(str.substring(start, end + 1)) > maxWidth)
+                // Maximum width reached, stop searching
                 break;
 
-            char c = line.charAt(end);
+            // Save the last good breakpoint
+            char c = str.charAt(end);
             if (Character.isWhitespace(c) || c == '-') {
                 lastGoodBreak = end + 1;
             }
@@ -213,31 +249,28 @@ public class FieldHelper extends TextFieldHelper {
             end++;
         }
 
-        if (end == line.length())
-            return end; // End of line fits
+        if (end == str.length())
+            // Entire string fits
+            return end;
 
         if (lastGoodBreak != -1 && lastGoodBreak > start) {
-            return lastGoodBreak; // Prefer break at whitespace or hyphen
-        } else if (end > start) {
-            return end; // Fallback to breaking at current point
-        } else {
+            // Good breakpoint exists; return it
+            return lastGoodBreak;
+        } else if (end == start) {
             // Very long single character (e.g. emoji or CJK char); force one char
             return start + 1;
+        } else {
+            // No good breakpoint available; revert to maximum fit
+            return end;
         }
     }
 
-    private static int getWidth(String str) {
-        return Minecraft.getInstance().font.width(str);
-    }
-
-    @Override
-    public boolean charTyped(char character) {
-        return super.charTyped(character);
-    }
-
+    /**
+     * Provides custom key-press handling.
+     */
     @Override
     public boolean keyPressed(int key) {
-        if (text == null)
+        if (cachedText == null)
             return false;
         if (Screen.isSelectAll(key)) {
             selectAll();
@@ -254,6 +287,10 @@ public class FieldHelper extends TextFieldHelper {
         } else {
             CursorStep step = Screen.hasControlDown() ? CursorStep.WORD : CursorStep.CHARACTER;
             return switch (key) {
+                case GLFW.GLFW_KEY_ENTER, GLFW.GLFW_KEY_KP_ENTER -> {
+                    insertText("\n");
+                    yield true;
+                }
                 case GLFW.GLFW_KEY_BACKSPACE -> {
                     removeFromCursor(-1, step);
                     yield true;
@@ -276,7 +313,7 @@ public class FieldHelper extends TextFieldHelper {
                     for (int i = start; i >= 0; i--) {
                         if (i > 0
                                 && i < start
-                                && String.valueOf(text.charAt(i - 1)).equals("\n")) {
+                                && String.valueOf(cachedText.charAt(i - 1)).equals("\n")) {
                             setCursorPos(i, Screen.hasShiftDown());
                             yield true;
                         }
@@ -287,11 +324,11 @@ public class FieldHelper extends TextFieldHelper {
                 }
                 case GLFW.GLFW_KEY_END -> {
                     // Scan forwards to the next linebreak, ignoring an adjacent one
-                    int max = text.length();
+                    int max = cachedText.length();
                     int start = getCursorPos();
                     for (int i = start; i <= max; i++) {
                         if (i == max ||
-                                (i > start && String.valueOf(text.charAt(i)).equals("\n"))) {
+                                (i > start && String.valueOf(cachedText.charAt(i)).equals("\n"))) {
                             setCursorPos(i, Screen.hasShiftDown());
                             yield true;
                         }
@@ -305,18 +342,34 @@ public class FieldHelper extends TextFieldHelper {
         }
     }
 
-    private static String arrToStr(String[] arr) {
+    /**
+     * Unused override.
+     */
+    @Override
+    public boolean charTyped(char character) {
+        return super.charTyped(character);
+    }
+
+    /**
+     * @return a print-friendly representation of the array.
+     */
+    @SuppressWarnings("unused")
+    private static String escaped(String[] arr) {
         StringBuilder builder = new StringBuilder();
         for (String str : arr) {
-            builder.append(str);
-            builder.append(", ");
+            builder.append("'").append(escaped(str)).append("', ");
         }
+        // Trim trailing delimiter
         String out = builder.length() > 2
                 ? builder.substring(0, builder.length() - 2)
                 : builder.toString();
-        return escaped("[" + out + "]");
+        return "[" + out + "]";
     }
 
+    /**
+     * @return a print-friendly representation of the string.
+     */
+    @SuppressWarnings("unused")
     private static String escaped(String str) {
         return str.replace("\n", "\\n")
                 .replace("\r", "\\r")

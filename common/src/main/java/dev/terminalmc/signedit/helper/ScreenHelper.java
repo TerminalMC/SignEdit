@@ -19,7 +19,9 @@ package dev.terminalmc.signedit.helper;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.blockentity.SignRenderer;
 import net.minecraft.world.level.block.entity.SignBlockEntity;
+import net.minecraft.world.level.block.entity.SignText;
 import org.lwjgl.glfw.GLFW;
 
 import java.util.ArrayList;
@@ -27,6 +29,11 @@ import java.util.List;
 
 public class ScreenHelper {
 
+    /**
+     * Handles vertical line navigation using arrow keys.
+     * <p>
+     * All other custom actions are to be handled by {@link FieldHelper#keyPressed}.
+     */
     public static boolean keyPressed(String[] lines, FieldHelper field, int line, int keyCode) {
         return switch (keyCode) {
             case GLFW.GLFW_KEY_UP -> {
@@ -39,20 +46,53 @@ public class ScreenHelper {
                 field.cursorToLine(Math.floorMod(line + 1, lines.length));
                 yield true;
             }
-            case GLFW.GLFW_KEY_ENTER, GLFW.GLFW_KEY_KP_ENTER -> {
-                field.insertText("\n");
-                yield true;
-            }
             default -> false;
         };
     }
 
-    public static void render(
+    /**
+     * For each line that ends with a manual line break, renders an indicator at the end.
+     */
+    public static void renderLinebreaks(
             GuiGraphics graphics,
-            FieldHelper helper,
             Font font,
-            String[] messages,
-            SignBlockEntity sign
+            FieldHelper helper,
+            SignBlockEntity sign,
+            SignText text,
+            String[] messages
+    ) {
+        int color = text.hasGlowingText()
+                ? text.getColor().getTextColor()
+                : SignRenderer.getDarkColor(text);
+        int lineHeight = sign.getTextLineHeight();
+        int centerY = messages.length * sign.getTextLineHeight() / 2;
+
+        for (int i = 1; i < messages.length; i++) {
+            String str = messages[i];
+            if (str == null)
+                continue;
+            if (helper.linebreakBefore(i)) {
+                graphics.drawString(
+                        font,
+                        "\u21a9",
+                        sign.getMaxTextLineWidth() / 2,
+                        (i - 1) * lineHeight - centerY,
+                        color,
+                        false
+                );
+            }
+        }
+    }
+
+    /**
+     * Renders a multi-line text-selection highlight area.
+     */
+    public static void renderHighlight(
+            GuiGraphics graphics,
+            Font font,
+            FieldHelper helper,
+            SignBlockEntity sign,
+            String[] messages
     ) {
         int idx1 = Math.min(helper.getCursorPos(), helper.getSelectionPos());
         int idx2 = Math.max(helper.getCursorPos(), helper.getSelectionPos());
@@ -88,7 +128,7 @@ public class ScreenHelper {
                     m,
                     v,
                     m + sign.getTextLineHeight(),
-                    -16776961
+                    0xFF0000FF
             );
         }
     }

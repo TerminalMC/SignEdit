@@ -38,6 +38,9 @@ import static dev.terminalmc.signedit.util.Localization.localized;
 @Mixin(SignBlock.class)
 public class SignBlockMixin {
 
+    /**
+     * Copies the text from a waxed sign when the player 'uses' it with an empty hand.
+     */
     @Inject(
             method = "useItemOn",
             at = @At("HEAD")

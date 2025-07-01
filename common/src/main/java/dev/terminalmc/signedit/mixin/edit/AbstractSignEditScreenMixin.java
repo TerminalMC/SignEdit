@@ -19,18 +19,14 @@ package dev.terminalmc.signedit.mixin.edit;
 import com.llamalad7.mixinextras.injector.wrapmethod.WrapMethod;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
-import com.llamalad7.mixinextras.sugar.Local;
 import dev.terminalmc.signedit.SignEdit;
 import dev.terminalmc.signedit.helper.FieldHelper;
 import dev.terminalmc.signedit.helper.ScreenHelper;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.font.TextFieldHelper;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.AbstractSignEditScreen;
-import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.blockentity.SignRenderer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.block.entity.SignBlockEntity;
 import net.minecraft.world.level.block.entity.SignText;
@@ -73,6 +69,9 @@ public abstract class AbstractSignEditScreenMixin extends Screen {
     @Final
     private boolean isFrontText;
 
+    /**
+     * Replaces the existing {@link TextFieldHelper} with a new {@link FieldHelper}.
+     */
     @WrapOperation(
             method = "init",
             at = @At(
@@ -90,7 +89,7 @@ public abstract class AbstractSignEditScreenMixin extends Screen {
             return;
         }
 
-        FieldHelper.text = null;
+        FieldHelper.cachedText = null;
         original.call(
                 instance, new FieldHelper(
                         () -> messages,
@@ -98,20 +97,26 @@ public abstract class AbstractSignEditScreenMixin extends Screen {
                         TextFieldHelper.createClipboardGetter(Minecraft.getInstance()),
                         TextFieldHelper.createClipboardSetter(Minecraft.getInstance()),
                         sign::getMaxTextLineWidth,
-                        4
+                        messages.length
                 )
         );
     }
 
+    /**
+     * Updates the sign text.
+     */
     @Unique
-    private void signEdit$setMessages(String[] messages) {
-        for (int i = 0; i < messages.length; i++) {
-            this.messages[i] = messages[i];
-            this.text.setMessage(i, Component.literal(messages[i]));
+    private void signEdit$setMessages(String[] newMessages) {
+        for (int i = 0; i < newMessages.length; i++) {
+            messages[i] = newMessages[i];
+            text.setMessage(i, Component.literal(newMessages[i]));
         }
-        this.sign.setText(this.text, this.isFrontText);
+        sign.setText(text, isFrontText);
     }
 
+    /**
+     * Diverts key-presses to {@link ScreenHelper#keyPressed}.
+     */
     @WrapMethod(method = "keyPressed")
     private boolean wrapKeyPressed(
             int keyCode,
@@ -126,20 +131,29 @@ public abstract class AbstractSignEditScreenMixin extends Screen {
             return super.keyPressed(keyCode, scanCode, modifiers);
 
         return ScreenHelper.keyPressed(messages, (FieldHelper) signField, line, keyCode)
-                || signField.keyPressed(keyCode) || super.keyPressed(keyCode, scanCode, modifiers);
+                || signField.keyPressed(keyCode)
+                || super.keyPressed(keyCode, scanCode, modifiers);
     }
 
+    /**
+     * At the start of the render pass, sets the active line to the line that the cursor is
+     * currently on.
+     */
     @Inject(
             method = "renderSignText",
             at = @At("HEAD")
     )
-    private void beforeInit(GuiGraphics graphics, CallbackInfo ci) {
+    private void beforeRenderSignText(GuiGraphics graphics, CallbackInfo ci) {
         if (!SignEdit.enhancedEditing)
             return;
 
+        assert signField != null;
         this.line = ((FieldHelper) signField).linePoint(signField.getCursorPos()).line();
     }
 
+    /**
+     * Sets the cursor rendering position to the position on the active line.
+     */
     @WrapOperation(
             method = "renderSignText",
             at = @At(
@@ -151,9 +165,14 @@ public abstract class AbstractSignEditScreenMixin extends Screen {
         if (!SignEdit.enhancedEditing)
             return original.call(instance);
 
+        assert signField != null;
         return ((FieldHelper) signField).linePoint(original.call(instance)).point();
     }
 
+    /**
+     * Sets the selection rendering position to the same value as the cursor position to prevent the
+     * selection highlight code from running.
+     */
     @WrapOperation(
             method = "renderSignText",
             at = @At(
@@ -165,116 +184,26 @@ public abstract class AbstractSignEditScreenMixin extends Screen {
         if (!SignEdit.enhancedEditing)
             return original.call(instance);
 
-        return ((FieldHelper) signField).linePoint(original.call(instance)).point();
+        assert signField != null;
+        return ((FieldHelper) signField).linePoint(signField.getCursorPos()).point();
     }
 
+    /**
+     * At the end of the render pass, renders the multiline selection highlight and linebreak
+     * indicators.
+     */
+    @SuppressWarnings("UnnecessaryUnicodeEscape")
     @Inject(
             method = "renderSignText",
-            at = @At(
-                    value = "INVOKE",
-                    target = "Lnet/minecraft/client/gui/font/TextFieldHelper;getSelectionPos()I"
-            )
+            at = @At(value = "RETURN")
     )
-    private void afterGetSelectionPos(GuiGraphics graphics, CallbackInfo ci) {
-        int color = text.hasGlowingText()
-                ? text.getColor().getTextColor()
-                : SignRenderer.getDarkColor(text);
-        int lineHeight = sign.getTextLineHeight();
-        int centerY = messages.length * sign.getTextLineHeight() / 2;
-        for (int i = 1; i < messages.length; i++) {
-            if (((FieldHelper) signField).newLineBefore(i)) {
-                graphics.drawString(
-                        font,
-                        "\u21a9",
-                        sign.getMaxTextLineWidth() / 2,
-                        (i - 1) * lineHeight - centerY,
-                        color,
-                        false
-                );
-            }
-        }
-    }
-
-    @WrapOperation(
-            method = "renderSignText",
-            at = @At(
-                    value = "INVOKE",
-                    target = "Ljava/lang/String;substring(II)Ljava/lang/String;",
-                    ordinal = 2
-            )
-    )
-    private String wrapSubstring2(
-            String instance,
-            int beginIndex,
-            int endIndex,
-            Operation<String> original
-    ) {
+    private void afterRenderSignText(GuiGraphics graphics, CallbackInfo ci) {
         if (!SignEdit.enhancedEditing)
-            return original.call(instance, beginIndex, endIndex);
+            return;
 
-        return instance;
-    }
-
-    @WrapOperation(
-            method = "renderSignText",
-            at = @At(
-                    value = "INVOKE",
-                    target = "Ljava/lang/String;substring(II)Ljava/lang/String;",
-                    ordinal = 3
-            )
-    )
-    private String wrapSubstring3(
-            String instance,
-            int beginIndex,
-            int endIndex,
-            Operation<String> original
-    ) {
-        if (!SignEdit.enhancedEditing)
-            return original.call(instance, beginIndex, endIndex);
-
-        return instance;
-    }
-
-    @WrapOperation(
-            method = "renderSignText",
-            at = @At(
-                    value = "INVOKE",
-                    target = "Lnet/minecraft/client/gui/Font;width(Ljava/lang/String;)I",
-                    ordinal = 4
-            )
-    )
-    private int wrapWidth(
-            Font instance,
-            String text,
-            Operation<Integer> original,
-            @Local(argsOnly = true) GuiGraphics graphics
-    ) {
-        if (!SignEdit.enhancedEditing)
-            return original.call(instance, text);
-
-        ScreenHelper.render(graphics, (FieldHelper) signField, font, messages, sign);
-        return original.call(instance, text);
-    }
-
-    @WrapOperation(
-            method = "renderSignText",
-            at = @At(
-                    value = "INVOKE",
-                    target = "Lnet/minecraft/client/gui/GuiGraphics;fill(Lnet/minecraft/client/renderer/RenderType;IIIII)V"
-            )
-    )
-    private void wrapFill(
-            GuiGraphics graphics,
-            RenderType renderType,
-            int minX,
-            int minY,
-            int maxX,
-            int maxY,
-            int color,
-            Operation<Void> original
-    ) {
-        if (!SignEdit.enhancedEditing) {
-            original.call(graphics, renderType, minX, minY, maxX, maxY, color);
-        }
+        assert signField != null;
+        FieldHelper helper = (FieldHelper) signField;
+        ScreenHelper.renderLinebreaks(graphics, font, helper, sign, text, messages);
+        ScreenHelper.renderHighlight(graphics, font, helper, sign, messages);
     }
 }
