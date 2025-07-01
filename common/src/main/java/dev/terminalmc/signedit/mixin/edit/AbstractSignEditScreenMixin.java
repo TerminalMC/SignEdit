@@ -192,7 +192,6 @@ public abstract class AbstractSignEditScreenMixin extends Screen {
      * At the end of the render pass, renders the multiline selection highlight and linebreak
      * indicators.
      */
-    @SuppressWarnings("UnnecessaryUnicodeEscape")
     @Inject(
             method = "renderSignText",
             at = @At(value = "RETURN")

@@ -53,6 +53,7 @@ public class ScreenHelper {
     /**
      * For each line that ends with a manual line break, renders an indicator at the end.
      */
+    @SuppressWarnings("UnnecessaryUnicodeEscape")
     public static void renderLinebreaks(
             GuiGraphics graphics,
             Font font,
