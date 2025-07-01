@@ -237,64 +237,71 @@ public class FieldHelper extends TextFieldHelper {
 
     @Override
     public boolean keyPressed(int key) {
+        if (text == null)
+            return false;
         if (Screen.isSelectAll(key)) {
-            this.selectAll();
+            selectAll();
             return true;
         } else if (Screen.isCopy(key)) {
-            this.copy();
+            copy();
             return true;
         } else if (Screen.isPaste(key)) {
-            this.paste();
+            paste();
             return true;
         } else if (Screen.isCut(key)) {
-            this.cut();
+            cut();
             return true;
         } else {
-            CursorStep textfieldhelper$cursorstep =
-                    Screen.hasControlDown() ? CursorStep.WORD : CursorStep.CHARACTER;
-            if (key == GLFW.GLFW_KEY_BACKSPACE) {
-                this.removeFromCursor(-1, textfieldhelper$cursorstep);
-                return true;
-            } else {
-                if (key == GLFW.GLFW_KEY_DELETE) {
-                    this.removeFromCursor(1, textfieldhelper$cursorstep);
-                } else {
-                    if (key == GLFW.GLFW_KEY_LEFT) {
-                        this.moveBy(-1, Screen.hasShiftDown(), textfieldhelper$cursorstep);
-                        return true;
-                    }
-
-                    if (key == GLFW.GLFW_KEY_RIGHT) {
-                        this.moveBy(1, Screen.hasShiftDown(), textfieldhelper$cursorstep);
-                        return true;
-                    }
-
-                    if (key == GLFW.GLFW_KEY_HOME) {
-                        for (int i = getCursorPos(); i >= 0; i--) {
-                            if (i > 0 && String.valueOf(text.charAt(i - 1)).equals("\n")) {
-                                this.setCursorPos(i, Screen.hasShiftDown());
-                                return true;
-                            }
-                        }
-                        this.setCursorToStart(Screen.hasShiftDown());
-                        return true;
-                    }
-
-                    if (key == GLFW.GLFW_KEY_END) {
-                        int max = text.length();
-                        for (int i = getCursorPos(); i <= max; i++) {
-                            if (i == max || String.valueOf(text.charAt(i)).equals("\n")) {
-                                this.setCursorPos(i, Screen.hasShiftDown());
-                                return true;
-                            }
-                        }
-                        this.setCursorToEnd(Screen.hasShiftDown());
-                        return true;
-                    }
+            CursorStep step = Screen.hasControlDown() ? CursorStep.WORD : CursorStep.CHARACTER;
+            return switch (key) {
+                case GLFW.GLFW_KEY_BACKSPACE -> {
+                    removeFromCursor(-1, step);
+                    yield true;
                 }
-
-                return false;
-            }
+                case GLFW.GLFW_KEY_DELETE -> {
+                    removeFromCursor(1, step);
+                    yield true;
+                }
+                case GLFW.GLFW_KEY_LEFT -> {
+                    moveBy(-1, Screen.hasShiftDown(), step);
+                    yield true;
+                }
+                case GLFW.GLFW_KEY_RIGHT -> {
+                    moveBy(1, Screen.hasShiftDown(), step);
+                    yield true;
+                }
+                case GLFW.GLFW_KEY_HOME -> {
+                    // Scan backwards to the previous linebreak, ignoring an adjacent one
+                    int start = getCursorPos();
+                    for (int i = start; i >= 0; i--) {
+                        if (i > 0
+                                && i < start
+                                && String.valueOf(text.charAt(i - 1)).equals("\n")) {
+                            setCursorPos(i, Screen.hasShiftDown());
+                            yield true;
+                        }
+                    }
+                    // No linebreak found; jump to start
+                    setCursorToStart(Screen.hasShiftDown());
+                    yield true;
+                }
+                case GLFW.GLFW_KEY_END -> {
+                    // Scan forwards to the next linebreak, ignoring an adjacent one
+                    int max = text.length();
+                    int start = getCursorPos();
+                    for (int i = start; i <= max; i++) {
+                        if (i == max ||
+                                (i > start && String.valueOf(text.charAt(i)).equals("\n"))) {
+                            setCursorPos(i, Screen.hasShiftDown());
+                            yield true;
+                        }
+                    }
+                    // No linebreak found; jump to end
+                    setCursorToEnd(Screen.hasShiftDown());
+                    yield true;
+                }
+                default -> false;
+            };
         }
     }
 
