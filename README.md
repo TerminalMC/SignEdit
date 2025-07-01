@@ -33,8 +33,16 @@ Enhances the built-in sign editor.
 
 ### Compatibility
 
-- SignEdit is **incompatible** with [SignCopy](https://modrinth.com/mod/cK4nxndh), because it
-  includes the complete functionality of that mod.
+The following mods are incompatible with SignEdit, due to modifying the same code.
+
+- [Chat Calc](https://modrinth.com/mod/o2oFdqXS) (`chatcalc`) by Emirlol.
+- [Improved Sign Editing](https://modrinth.com/mod/EWQifKYI) (`improvedsignediting`) by Serilum.
+- [SignCopy](https://modrinth.com/mod/cK4nxndh) (`signcopy`) by TerminalMC.
+- [Sign Edit Lite](https://modrinth.com/mod/QvdBkyYv) (`signeditlite`) by pintergabor.
+- [Sign Tools](https://modrinth.com/mod/31HqGqE1) (`signtools`) by DmitryLovin.
+
+Beyond this list, you should generally assume that other mods altering the sign editor will not be
+compatible.
 
 ### Contact
 
