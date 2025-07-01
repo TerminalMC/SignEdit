@@ -30,6 +30,7 @@ import net.minecraft.client.gui.font.TextFieldHelper;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.AbstractSignEditScreen;
 import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.blockentity.SignRenderer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.block.entity.SignBlockEntity;
 import net.minecraft.world.level.block.entity.SignText;
@@ -165,6 +166,33 @@ public abstract class AbstractSignEditScreenMixin extends Screen {
             return original.call(instance);
 
         return ((FieldHelper) signField).linePoint(original.call(instance)).point();
+    }
+
+    @Inject(
+            method = "renderSignText",
+            at = @At(
+                    value = "INVOKE",
+                    target = "Lnet/minecraft/client/gui/font/TextFieldHelper;getSelectionPos()I"
+            )
+    )
+    private void afterGetSelectionPos(GuiGraphics graphics, CallbackInfo ci) {
+        int color = text.hasGlowingText()
+                ? text.getColor().getTextColor()
+                : SignRenderer.getDarkColor(text);
+        int lineHeight = sign.getTextLineHeight();
+        int centerY = messages.length * sign.getTextLineHeight() / 2;
+        for (int i = 1; i < messages.length; i++) {
+            if (((FieldHelper) signField).newLineBefore(i)) {
+                graphics.drawString(
+                        font,
+                        "\u21a9",
+                        sign.getMaxTextLineWidth() / 2,
+                        (i - 1) * lineHeight - centerY,
+                        color,
+                        false
+                );
+            }
+        }
     }
 
     @WrapOperation(

@@ -77,14 +77,28 @@ public class FieldHelper extends TextFieldHelper {
 
     // this is a long line wit
 
-    public void cursorToLine(int line, boolean start) {
+    public boolean newLineBefore(int line) {
+        String text = getMessageFn.get();
+        int maxWidth = getMaxWidthFn.get();
+        if (line <= 0 || line >= lineCount)
+            return false;
+        String[] lines = wrap(text, maxWidth, lineCount);
+        for (int i = 0; i <= text.length(); i++) {
+            if (linePoint(text, lines, i).line() == line) {
+                return i > 0 && String.valueOf(text.charAt(i - 1)).equals("\n");
+            }
+        }
+        return false;
+    }
+
+    public void cursorToLine(int line) {
         String text = getMessageFn.get();
         int maxWidth = getMaxWidthFn.get();
         String[] lines = wrap(text, maxWidth, lineCount);
-        LinePoint linePoint = new LinePoint(line, start ? 0 : lines[line].length());
+        LinePoint primaryLp = new LinePoint(line, lines[line].length());
         for (int i = 0; i <= text.length(); i++) {
-            if (linePoint(text, lines, i).equals(linePoint)) {
-                setCursorPos(i, false);
+            if (linePoint(text, lines, i).equals(primaryLp)) {
+                setCursorPos(i, Screen.hasShiftDown());
             }
         }
     }

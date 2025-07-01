@@ -31,12 +31,12 @@ public class ScreenHelper {
         return switch (keyCode) {
             case GLFW.GLFW_KEY_UP -> {
                 // Shift cursor to end of previous line (wrapped)
-                field.cursorToLine(Math.floorMod(line - 1, lines.length), false);
+                field.cursorToLine(Math.floorMod(line - 1, lines.length));
                 yield true;
             }
             case GLFW.GLFW_KEY_DOWN -> {
                 // Shift cursor to end of next line (wrapped)
-                field.cursorToLine(Math.floorMod(line + 1, lines.length), false);
+                field.cursorToLine(Math.floorMod(line + 1, lines.length));
                 yield true;
             }
             case GLFW.GLFW_KEY_ENTER, GLFW.GLFW_KEY_KP_ENTER -> {
