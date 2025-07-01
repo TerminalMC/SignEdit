@@ -33,7 +33,7 @@ Enhances the built-in sign editor.
 
 ### Compatibility
 
-The following mods are incompatible with SignEdit, due to modifying the same code.
+The following mods are explicitly incompatible with SignEdit, due to modifying the same code.
 
 - [Chat Calc](https://modrinth.com/mod/o2oFdqXS) (`chatcalc`) by Emirlol.
 - [Improved Sign Editing](https://modrinth.com/mod/EWQifKYI) (`improvedsignediting`) by Serilum.
@@ -43,6 +43,8 @@ The following mods are incompatible with SignEdit, due to modifying the same cod
 
 Beyond this list, you should generally assume that other mods altering the sign editor will not be
 compatible.
+
+If you encounter an unexpected incompatibility, please report it.
 
 ### Contact
 
