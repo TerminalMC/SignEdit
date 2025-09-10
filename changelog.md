@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.2
+
+- Disabled keyboard navigation of editor buttons
+
 ## 0.1.1
 
 - Disabled MixinExtras JiJ on Fabric

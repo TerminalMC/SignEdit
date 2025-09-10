@@ -31,6 +31,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.block.entity.SignBlockEntity;
 import net.minecraft.world.level.block.entity.SignText;
 import org.jetbrains.annotations.Nullable;
+import org.lwjgl.glfw.GLFW;
 import org.spongepowered.asm.mixin.*;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -127,12 +128,16 @@ public abstract class AbstractSignEditScreenMixin extends Screen {
         if (!SignEdit.enhancedEditing)
             return original.call(keyCode, scanCode, modifiers);
 
-        if (signField == null || messages.length == 0)
+        if (signField != null && messages.length > 0) {
+            if (ScreenHelper.keyPressed(messages, (FieldHelper) signField, line, keyCode)
+                    || signField.keyPressed(keyCode))
+                return true;
+        }
+
+        if (keyCode != GLFW.GLFW_KEY_SPACE && keyCode != GLFW.GLFW_KEY_TAB)
             return super.keyPressed(keyCode, scanCode, modifiers);
 
-        return ScreenHelper.keyPressed(messages, (FieldHelper) signField, line, keyCode)
-                || signField.keyPressed(keyCode)
-                || super.keyPressed(keyCode, scanCode, modifiers);
+        return false;
     }
 
     /**
