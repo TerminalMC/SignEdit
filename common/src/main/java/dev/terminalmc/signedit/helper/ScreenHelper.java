@@ -18,7 +18,7 @@ package dev.terminalmc.signedit.helper;
 
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.client.renderer.blockentity.SignRenderer;
 import net.minecraft.world.level.block.entity.SignBlockEntity;
 import net.minecraft.world.level.block.entity.SignText;
@@ -124,7 +124,7 @@ public class ScreenHelper {
             int u = Math.min(s, t);
             int v = Math.max(s, t);
             graphics.fill(
-                    RenderType.guiTextHighlight(),
+                    RenderPipelines.GUI_TEXT_HIGHLIGHT,
                     u,
                     m,
                     v,
