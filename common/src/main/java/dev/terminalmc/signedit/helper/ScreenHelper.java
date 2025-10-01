@@ -18,6 +18,7 @@ package dev.terminalmc.signedit.helper;
 
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.input.KeyEvent;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.client.renderer.blockentity.SignRenderer;
 import net.minecraft.world.level.block.entity.SignBlockEntity;
@@ -34,16 +35,16 @@ public class ScreenHelper {
      * <p>
      * All other custom actions are to be handled by {@link FieldHelper#keyPressed}.
      */
-    public static boolean keyPressed(String[] lines, FieldHelper field, int line, int keyCode) {
-        return switch (keyCode) {
+    public static boolean keyPressed(String[] lines, FieldHelper field, int line, KeyEvent event) {
+        return switch (event.key()) {
             case GLFW.GLFW_KEY_UP -> {
                 // Shift cursor to end of previous line (wrapped)
-                field.cursorToLine(Math.floorMod(line - 1, lines.length));
+                field.cursorToLine(Math.floorMod(line - 1, lines.length), event.hasShiftDown());
                 yield true;
             }
             case GLFW.GLFW_KEY_DOWN -> {
                 // Shift cursor to end of next line (wrapped)
-                field.cursorToLine(Math.floorMod(line + 1, lines.length));
+                field.cursorToLine(Math.floorMod(line + 1, lines.length), event.hasShiftDown());
                 yield true;
             }
             default -> false;

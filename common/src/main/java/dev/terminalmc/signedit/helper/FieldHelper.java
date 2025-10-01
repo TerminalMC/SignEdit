@@ -18,7 +18,8 @@ package dev.terminalmc.signedit.helper;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.font.TextFieldHelper;
-import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.input.CharacterEvent;
+import net.minecraft.client.input.KeyEvent;
 import org.jetbrains.annotations.Nullable;
 import org.lwjgl.glfw.GLFW;
 
@@ -88,14 +89,14 @@ public class FieldHelper extends TextFieldHelper {
     /**
      * Shifts the cursor to the end of the line.
      */
-    public void cursorToLine(int line) {
+    public void cursorToLine(int line, boolean hasShiftDown) {
         String text = getMessageFn.get();
         int maxWidth = getMaxWidthFn.get();
         String[] lines = wrap(text, maxWidth, lineCount);
         LinePoint primaryLp = new LinePoint(line, lines[line].length());
         for (int i = 0; i <= text.length(); i++) {
             if (linePoint(text, lines, i).equals(primaryLp)) {
-                setCursorPos(i, Screen.hasShiftDown());
+                setCursorPos(i, hasShiftDown);
             }
         }
     }
@@ -269,24 +270,24 @@ public class FieldHelper extends TextFieldHelper {
      * Provides custom key-press handling.
      */
     @Override
-    public boolean keyPressed(int key) {
+    public boolean keyPressed(KeyEvent event) {
         if (cachedText == null)
             return false;
-        if (Screen.isSelectAll(key)) {
+        if (event.isSelectAll()) {
             selectAll();
             return true;
-        } else if (Screen.isCopy(key)) {
+        } else if (event.isCopy()) {
             copy();
             return true;
-        } else if (Screen.isPaste(key)) {
+        } else if (event.isPaste()) {
             paste();
             return true;
-        } else if (Screen.isCut(key)) {
+        } else if (event.isCut()) {
             cut();
             return true;
         } else {
-            CursorStep step = Screen.hasControlDown() ? CursorStep.WORD : CursorStep.CHARACTER;
-            return switch (key) {
+            CursorStep step = event.hasControlDown() ? CursorStep.WORD : CursorStep.CHARACTER;
+            return switch (event.key()) {
                 case GLFW.GLFW_KEY_ENTER, GLFW.GLFW_KEY_KP_ENTER -> {
                     insertText("\n");
                     yield true;
@@ -300,11 +301,11 @@ public class FieldHelper extends TextFieldHelper {
                     yield true;
                 }
                 case GLFW.GLFW_KEY_LEFT -> {
-                    moveBy(-1, Screen.hasShiftDown(), step);
+                    moveBy(-1, event.hasShiftDown(), step);
                     yield true;
                 }
                 case GLFW.GLFW_KEY_RIGHT -> {
-                    moveBy(1, Screen.hasShiftDown(), step);
+                    moveBy(1, event.hasShiftDown(), step);
                     yield true;
                 }
                 case GLFW.GLFW_KEY_HOME -> {
@@ -314,12 +315,12 @@ public class FieldHelper extends TextFieldHelper {
                         if (i > 0
                                 && i < start
                                 && String.valueOf(cachedText.charAt(i - 1)).equals("\n")) {
-                            setCursorPos(i, Screen.hasShiftDown());
+                            setCursorPos(i, event.hasShiftDown());
                             yield true;
                         }
                     }
                     // No linebreak found; jump to start
-                    setCursorToStart(Screen.hasShiftDown());
+                    setCursorToStart(event.hasShiftDown());
                     yield true;
                 }
                 case GLFW.GLFW_KEY_END -> {
@@ -329,12 +330,12 @@ public class FieldHelper extends TextFieldHelper {
                     for (int i = start; i <= max; i++) {
                         if (i == max ||
                                 (i > start && String.valueOf(cachedText.charAt(i)).equals("\n"))) {
-                            setCursorPos(i, Screen.hasShiftDown());
+                            setCursorPos(i, event.hasShiftDown());
                             yield true;
                         }
                     }
                     // No linebreak found; jump to end
-                    setCursorToEnd(Screen.hasShiftDown());
+                    setCursorToEnd(event.hasShiftDown());
                     yield true;
                 }
                 default -> false;
@@ -346,8 +347,8 @@ public class FieldHelper extends TextFieldHelper {
      * Unused override.
      */
     @Override
-    public boolean charTyped(char character) {
-        return super.charTyped(character);
+    public boolean charTyped(CharacterEvent event) {
+        return super.charTyped(event);
     }
 
     /**

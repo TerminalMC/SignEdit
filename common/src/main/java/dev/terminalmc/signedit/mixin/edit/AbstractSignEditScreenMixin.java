@@ -27,6 +27,7 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.font.TextFieldHelper;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.AbstractSignEditScreen;
+import net.minecraft.client.input.KeyEvent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.block.entity.SignBlockEntity;
 import net.minecraft.world.level.block.entity.SignText;
@@ -119,23 +120,18 @@ public abstract class AbstractSignEditScreenMixin extends Screen {
      * Diverts key-presses to {@link ScreenHelper#keyPressed}.
      */
     @WrapMethod(method = "keyPressed")
-    private boolean wrapKeyPressed(
-            int keyCode,
-            int scanCode,
-            int modifiers,
-            Operation<Boolean> original
-    ) {
+    private boolean wrapKeyPressed(KeyEvent event, Operation<Boolean> original) {
         if (!SignEdit.enhancedEditing)
-            return original.call(keyCode, scanCode, modifiers);
+            return original.call(event);
 
         if (signField != null && messages.length > 0) {
-            if (ScreenHelper.keyPressed(messages, (FieldHelper) signField, line, keyCode)
-                    || signField.keyPressed(keyCode))
+            if (ScreenHelper.keyPressed(messages, (FieldHelper) signField, line, event)
+                    || signField.keyPressed(event))
                 return true;
         }
 
-        if (keyCode != GLFW.GLFW_KEY_SPACE && keyCode != GLFW.GLFW_KEY_TAB)
-            return super.keyPressed(keyCode, scanCode, modifiers);
+        if (event.key() != GLFW.GLFW_KEY_SPACE && event.key() != GLFW.GLFW_KEY_TAB)
+            return super.keyPressed(event);
 
         return false;
     }
