@@ -36,7 +36,11 @@ public class ConfigScreenProvider {
         try {
             return ClothScreenProvider.getConfigScreen(parent);
         } catch (NoClassDefFoundError ignored) {
-            return new BackupScreen(parent, "installCloth", "https://modrinth.com/project/9s6osm5g");
+            return new BackupScreen(
+                    parent,
+                    "installCloth",
+                    "https://modrinth.com/project/9s6osm5g"
+            );
         }
     }
 
@@ -71,7 +75,7 @@ public class ConfigScreenProvider {
                                     (open) -> {
                                         if (open)
                                             Util.getPlatform().openUri(modUrl);
-                                        Minecraft.getInstance().setScreen(parent);
+                                        onClose();
                                     }, modUrl, true
                             ))
                     )
@@ -85,6 +89,11 @@ public class ConfigScreenProvider {
                     .size(115, 20)
                     .build();
             addRenderableWidget(exitButton);
+        }
+
+        @Override
+        public void onClose() {
+            Minecraft.getInstance().setScreen(parent);
         }
     }
 }
