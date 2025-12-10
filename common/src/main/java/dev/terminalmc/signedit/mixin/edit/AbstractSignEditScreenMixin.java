@@ -33,6 +33,7 @@ import net.minecraft.world.level.block.entity.SignBlockEntity;
 import net.minecraft.world.level.block.entity.SignText;
 import org.jetbrains.annotations.Nullable;
 import org.lwjgl.glfw.GLFW;
+import org.objectweb.asm.Opcodes;
 import org.spongepowered.asm.mixin.*;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -78,7 +79,8 @@ public abstract class AbstractSignEditScreenMixin extends Screen {
             method = "init",
             at = @At(
                     value = "FIELD",
-                    target = "Lnet/minecraft/client/gui/screens/inventory/AbstractSignEditScreen;signField:Lnet/minecraft/client/gui/font/TextFieldHelper;"
+                    target = "Lnet/minecraft/client/gui/screens/inventory/AbstractSignEditScreen;signField:Lnet/minecraft/client/gui/font/TextFieldHelper;",
+                    opcode = Opcodes.PUTFIELD
             )
     )
     private void wrapSetHelper(

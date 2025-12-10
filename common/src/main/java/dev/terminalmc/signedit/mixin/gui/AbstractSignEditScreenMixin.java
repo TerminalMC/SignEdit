@@ -26,6 +26,7 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.AbstractSignEditScreen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.block.entity.SignBlockEntity;
+import org.jetbrains.annotations.NotNull;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -132,20 +133,21 @@ public abstract class AbstractSignEditScreenMixin extends Screen {
 
         // Enhanced editor toggle button
         if (options().useEnhancedEditor) {
-            CycleButton<Boolean> statusButton = CycleButton.onOffBuilder().create(
-                    baseX,
-                    movingY,
-                    totalWidth,
-                    buttonHeight,
-                    localized("button", "enhancedEditing"),
-                    (button, status) -> {
-                        if (SignEdit.enhancedEditing != status) {
-                            SignEdit.enhancedEditing = status;
-                            init();
-                        }
-                    }
-            );
-            statusButton.setValue(SignEdit.enhancedEditing);
+            CycleButton<@NotNull Boolean> statusButton = CycleButton
+                    .onOffBuilder(SignEdit.enhancedEditing)
+                    .create(
+                            baseX,
+                            movingY,
+                            totalWidth,
+                            buttonHeight,
+                            localized("button", "enhancedEditing"),
+                            (button, status) -> {
+                                if (SignEdit.enhancedEditing != status) {
+                                    SignEdit.enhancedEditing = status;
+                                    init();
+                                }
+                            }
+                    );
             original.call(instance, statusButton);
         }
 

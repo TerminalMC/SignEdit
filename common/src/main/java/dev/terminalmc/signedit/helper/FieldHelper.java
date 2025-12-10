@@ -20,6 +20,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.font.TextFieldHelper;
 import net.minecraft.client.input.CharacterEvent;
 import net.minecraft.client.input.KeyEvent;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.lwjgl.glfw.GLFW;
 
@@ -270,7 +271,7 @@ public class FieldHelper extends TextFieldHelper {
      * Provides custom key-press handling.
      */
     @Override
-    public boolean keyPressed(KeyEvent event) {
+    public boolean keyPressed(@NotNull KeyEvent event) {
         if (cachedText == null)
             return false;
         if (event.isSelectAll()) {
@@ -347,7 +348,7 @@ public class FieldHelper extends TextFieldHelper {
      * Unused override.
      */
     @Override
-    public boolean charTyped(CharacterEvent event) {
+    public boolean charTyped(@NotNull CharacterEvent event) {
         return super.charTyped(event);
     }
 

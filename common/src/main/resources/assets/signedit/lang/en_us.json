@@ -1,8 +1,8 @@
 {
   "signedit.name": "SignEdit",
 
-  "message.framework.viewModrinth": "View on Modrinth",
-  "message.framework.installCloth": "Install Cloth Config API to access mod options",
+  "message.signedit.viewModrinth": "View on Modrinth",
+  "message.signedit.installCloth": "Install Cloth Config API to access mod options",
 
   "message.signedit.copied": "Text copied from sign!",
 
