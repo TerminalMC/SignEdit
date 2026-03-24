@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.0.0
+
+- Initial stable release
+
 ## 0.1.2
 
 - Disabled keyboard navigation of editor buttons

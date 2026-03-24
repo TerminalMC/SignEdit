@@ -3,6 +3,7 @@
 
   "message.signedit.viewModrinth": "View on Modrinth",
   "message.signedit.installCloth": "Install Cloth Config API to access mod options",
+  "message.signedit.configScreenDisabled": "Config screen is not available on this version.",
 
   "message.signedit.copied": "Text copied from sign!",
 

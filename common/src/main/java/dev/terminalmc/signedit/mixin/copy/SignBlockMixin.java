@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 TerminalMC
+ * Copyright 2026 TerminalMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,7 +36,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import static dev.terminalmc.signedit.util.Localization.localized;
 
 @Mixin(SignBlock.class)
-public class SignBlockMixin {
+public abstract class SignBlockMixin {
 
     /**
      * Copies the text from a waxed sign when the player 'uses' it with an empty hand.
@@ -64,7 +64,7 @@ public class SignBlockMixin {
                 lines[i] = textLines[i].getString();
             }
             SignEdit.copiedLines = lines;
-            player.displayClientMessage(localized("message", "copied"), true);
+            player.sendOverlayMessage(localized("message", "copied"));
         }
     }
 }

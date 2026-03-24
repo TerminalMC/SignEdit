@@ -37,7 +37,6 @@ The following mods are explicitly incompatible with SignEdit, due to modifying t
 
 - [Chat Calc](https://modrinth.com/project/o2oFdqXS) (`chatcalc`) by Emirlol.
 - [Improved Sign Editing](https://modrinth.com/project/EWQifKYI) (`improvedsignediting`) by Serilum.
-- [SignCopy](https://modrinth.com/project/cK4nxndh) (`signcopy`) by TerminalMC.
 - [Sign Edit Lite](https://modrinth.com/project/QvdBkyYv) (`signeditlite`) by pintergabor.
 - [Sign Tools](https://modrinth.com/project/31HqGqE1) (`signtools`) by DmitryLovin.
 

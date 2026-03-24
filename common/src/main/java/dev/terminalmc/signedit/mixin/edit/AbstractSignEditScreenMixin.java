@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 TerminalMC
+ * Copyright 2026 TerminalMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,7 +23,7 @@ import dev.terminalmc.signedit.SignEdit;
 import dev.terminalmc.signedit.helper.FieldHelper;
 import dev.terminalmc.signedit.helper.ScreenHelper;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.font.TextFieldHelper;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.AbstractSignEditScreen;
@@ -32,6 +32,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.block.entity.SignBlockEntity;
 import net.minecraft.world.level.block.entity.SignText;
 import org.jetbrains.annotations.Nullable;
+import org.joml.Vector2f;
 import org.lwjgl.glfw.GLFW;
 import org.objectweb.asm.Opcodes;
 import org.spongepowered.asm.mixin.*;
@@ -143,10 +144,14 @@ public abstract class AbstractSignEditScreenMixin extends Screen {
      * currently on.
      */
     @Inject(
-            method = "renderSignText",
+            method = "extractSignText",
             at = @At("HEAD")
     )
-    private void beforeRenderSignText(GuiGraphics graphics, CallbackInfo ci) {
+    private void beforeRenderSignText(
+            GuiGraphicsExtractor graphics,
+            Vector2f cursorPosOutput,
+            CallbackInfo ci
+    ) {
         if (!SignEdit.enhancedEditing)
             return;
 
@@ -158,7 +163,7 @@ public abstract class AbstractSignEditScreenMixin extends Screen {
      * Sets the cursor rendering position to the position on the active line.
      */
     @WrapOperation(
-            method = "renderSignText",
+            method = "extractSignText",
             at = @At(
                     value = "INVOKE",
                     target = "Lnet/minecraft/client/gui/font/TextFieldHelper;getCursorPos()I"
@@ -177,7 +182,7 @@ public abstract class AbstractSignEditScreenMixin extends Screen {
      * selection highlight code from running.
      */
     @WrapOperation(
-            method = "renderSignText",
+            method = "extractSignText",
             at = @At(
                     value = "INVOKE",
                     target = "Lnet/minecraft/client/gui/font/TextFieldHelper;getSelectionPos()I"
@@ -196,10 +201,14 @@ public abstract class AbstractSignEditScreenMixin extends Screen {
      * indicators.
      */
     @Inject(
-            method = "renderSignText",
+            method = "extractSignText",
             at = @At(value = "RETURN")
     )
-    private void afterRenderSignText(GuiGraphics graphics, CallbackInfo ci) {
+    private void afterRenderSignText(
+            GuiGraphicsExtractor graphics,
+            Vector2f cursorPosOutput,
+            CallbackInfo ci
+    ) {
         if (!SignEdit.enhancedEditing)
             return;
 

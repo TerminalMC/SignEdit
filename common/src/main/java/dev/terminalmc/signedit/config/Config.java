@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 TerminalMC
+ * Copyright 2026 TerminalMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,7 +19,7 @@ package dev.terminalmc.signedit.config;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import dev.terminalmc.signedit.SignEdit;
-import dev.terminalmc.signedit.platform.Services;
+import dev.terminalmc.signedit.platform.services.PlatformServices;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -31,7 +31,7 @@ import java.nio.file.StandardCopyOption;
 
 public class Config {
 
-    private static final Path DIR_PATH = Services.PLATFORM.getConfigDir();
+    private static final Path DIR_PATH = PlatformServices.getInstance().getConfigDir();
     private static final String FILE_NAME = SignEdit.MOD_ID + ".json";
     private static final String BACKUP_FILE_NAME = SignEdit.MOD_ID + ".unreadable.json";
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();

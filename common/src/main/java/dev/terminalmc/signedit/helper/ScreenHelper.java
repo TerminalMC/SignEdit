@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 TerminalMC
+ * Copyright 2026 TerminalMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,10 +17,10 @@
 package dev.terminalmc.signedit.helper;
 
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.input.KeyEvent;
 import net.minecraft.client.renderer.RenderPipelines;
-import net.minecraft.client.renderer.blockentity.SignRenderer;
+import net.minecraft.client.renderer.blockentity.AbstractSignRenderer;
 import net.minecraft.world.level.block.entity.SignBlockEntity;
 import net.minecraft.world.level.block.entity.SignText;
 import org.lwjgl.glfw.GLFW;
@@ -56,7 +56,7 @@ public class ScreenHelper {
      */
     @SuppressWarnings("UnnecessaryUnicodeEscape")
     public static void renderLinebreaks(
-            GuiGraphics graphics,
+            GuiGraphicsExtractor graphics,
             Font font,
             FieldHelper helper,
             SignBlockEntity sign,
@@ -65,7 +65,7 @@ public class ScreenHelper {
     ) {
         int color = text.hasGlowingText()
                 ? text.getColor().getTextColor()
-                : SignRenderer.getDarkColor(text);
+                : AbstractSignRenderer.getDarkColor(text);
         int lineHeight = sign.getTextLineHeight();
         int centerY = messages.length * sign.getTextLineHeight() / 2;
 
@@ -74,7 +74,7 @@ public class ScreenHelper {
             if (str == null)
                 continue;
             if (helper.linebreakBefore(i)) {
-                graphics.drawString(
+                graphics.text(
                         font,
                         "\u21a9",
                         sign.getMaxTextLineWidth() / 2,
@@ -90,7 +90,7 @@ public class ScreenHelper {
      * Renders a multi-line text-selection highlight area.
      */
     public static void renderHighlight(
-            GuiGraphics graphics,
+            GuiGraphicsExtractor graphics,
             Font font,
             FieldHelper helper,
             SignBlockEntity sign,
