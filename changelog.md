@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.0.0
+
+- Re-enabled config screen
+
 ## 1.0.0-beta.1
 
 - Updated to mc26.1
