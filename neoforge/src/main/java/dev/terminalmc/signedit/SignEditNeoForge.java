@@ -16,6 +16,7 @@
 
 package dev.terminalmc.signedit;
 
+import dev.terminalmc.signedit.command.Commands;
 import dev.terminalmc.signedit.gui.screen.ConfigScreenProvider;
 import net.minecraft.client.Minecraft;
 import net.neoforged.api.distmarker.Dist;
@@ -24,6 +25,7 @@ import net.neoforged.fml.ModLoadingContext;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.neoforge.client.event.ClientTickEvent;
+import net.neoforged.neoforge.client.event.RegisterClientCommandsEvent;
 import net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent;
 import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
 
@@ -68,6 +70,14 @@ public class SignEditNeoForge {
         @SubscribeEvent
         public static void registerAfterClientTick(ClientTickEvent.Post event) {
             SignEdit.afterClientTick(Minecraft.getInstance());
+        }
+
+        /**
+         * Registers client commands.
+         */
+        @SubscribeEvent
+        public static void onRegisterClientCommands(RegisterClientCommandsEvent event) {
+            Commands.register(event.getDispatcher(), event.getBuildContext());
         }
     }
 }

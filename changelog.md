@@ -4,6 +4,7 @@
 
 - Updated to mc26.1.2
 - Removed refmap usages
+- Added a command to open the config screen
 
 ## 1.0.0
 
