@@ -20,5 +20,7 @@
   "option.signedit.general.showActionButtons": "Show Quick Action Buttons",
   "option.signedit.general.showActionButtons.tooltip": "Whether to show the quick action buttons in the sign editor.",
   "option.signedit.general.actionButtonsCloseUi": "Action Buttons Close UI",
-  "option.signedit.general.actionButtonsCloseUi.tooltip": "Whether clicking the quick action buttons should close the sign editor."
+  "option.signedit.general.actionButtonsCloseUi.tooltip": "Whether clicking the quick action buttons should close the sign editor.",
+  "option.signedit.general.showLineBreakIndicator": "Show Line Breaks",
+  "option.signedit.general.showLineBreakIndicator.tooltip": "Whether to show a symbol where a line is broken manually rather than automatically."
 }

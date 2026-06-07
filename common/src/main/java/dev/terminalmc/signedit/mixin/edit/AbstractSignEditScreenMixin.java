@@ -40,6 +40,8 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import static dev.terminalmc.signedit.config.Config.options;
+
 @Debug(export = true)
 @Mixin(AbstractSignEditScreen.class)
 public abstract class AbstractSignEditScreenMixin extends Screen {
@@ -214,7 +216,8 @@ public abstract class AbstractSignEditScreenMixin extends Screen {
 
         assert signField != null;
         FieldHelper helper = (FieldHelper) signField;
-        ScreenHelper.renderLinebreaks(graphics, font, helper, sign, text, messages);
+        if (options().showLineBreakIndicator)
+            ScreenHelper.renderLinebreaks(graphics, font, helper, sign, text, messages);
         ScreenHelper.renderHighlight(graphics, font, helper, sign, messages);
     }
 }

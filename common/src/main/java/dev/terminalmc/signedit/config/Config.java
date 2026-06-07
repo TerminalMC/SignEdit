@@ -61,6 +61,9 @@ public class Config {
 
         public static final boolean actionButtonsCloseUiDefault = false;
         public boolean actionButtonsCloseUi = actionButtonsCloseUiDefault;
+
+        public static final boolean showLineBreakIndicatorDefault = false;
+        public boolean showLineBreakIndicator = showLineBreakIndicatorDefault;
     }
 
     // Instance management

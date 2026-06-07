@@ -84,6 +84,15 @@ public class ClothScreenProvider {
                 .setSaveConsumer(val -> options.actionButtonsCloseUi = val)
                 .build());
 
+        general.addEntry(eb.startBooleanToggle(
+                        localized("option", "general.showLineBreakIndicator"),
+                        options.showLineBreakIndicator
+                )
+                .setTooltip(localized("option", "general.showLineBreakIndicator.tooltip"))
+                .setDefaultValue(Config.Options.showLineBreakIndicatorDefault)
+                .setSaveConsumer(val -> options.showLineBreakIndicator = val)
+                .build());
+
         return builder.build();
     }
 }
