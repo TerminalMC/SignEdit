@@ -17,11 +17,12 @@
 package dev.terminalmc.signedit;
 
 import dev.terminalmc.signedit.config.Config;
-import dev.terminalmc.signedit.util.ModLogger;
+import dev.terminalmc.signedit.util.Logging;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
+import org.apache.logging.log4j.Logger;
 
 import java.util.List;
 
@@ -29,7 +30,7 @@ public class SignEdit {
 
     public static final String MOD_ID = "signedit";
     public static final String MOD_NAME = "SignEdit";
-    public static final ModLogger LOG = new ModLogger(MOD_NAME);
+    public static final Logger LOG = Logging.getLogger(MOD_ID);
     public static final Component PREFIX = Component.empty()
             .append(Component.literal("[").withStyle(ChatFormatting.DARK_GRAY))
             .append(Component.literal(MOD_NAME).withStyle(ChatFormatting.GOLD))
@@ -41,14 +42,27 @@ public class SignEdit {
 
     public static String[] copiedLines;
 
+    private SignEdit() {
+        throw new UnsupportedOperationException("This class cannot be instantiated.");
+    }
+
+    /**
+     * Client initialization.
+     */
     public static void init() {
 
     }
 
+    /**
+     * Client after-tick event listener.
+     */
     public static void afterClientTick(Minecraft mc) {
 
     }
 
+    /**
+     * Config save listener.
+     */
     public static void onConfigSaved(Config config) {
         // If you are maintaining caches based on config, update them here.
     }
