@@ -58,6 +58,15 @@ public class ClothScreenProvider {
                 .build());
 
         general.addEntry(eb.startBooleanToggle(
+                        localized("option", "general.showEditorToggleButton"),
+                        options.showEditorToggleButton
+                )
+                .setTooltip(localized("option", "general.showEditorToggleButton.tooltip"))
+                .setDefaultValue(Config.Options.showEditorToggleButtonDefault)
+                .setSaveConsumer(val -> options.showEditorToggleButton = val)
+                .build());
+
+        general.addEntry(eb.startBooleanToggle(
                         localized("option", "general.showActionButtons"),
                         options.showActionButtons
                 )

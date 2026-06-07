@@ -53,6 +53,9 @@ public class Config {
         public static final boolean useEnhancedEditorDefault = true;
         public boolean useEnhancedEditor = useEnhancedEditorDefault;
 
+        public static final boolean showEditorToggleButtonDefault = false;
+        public boolean showEditorToggleButton = showEditorToggleButtonDefault;
+
         public static final boolean showActionButtonsDefault = true;
         public boolean showActionButtons = showActionButtonsDefault;
 

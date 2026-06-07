@@ -92,7 +92,7 @@ public abstract class AbstractSignEditScreenMixin extends Screen {
         int rowCount = 0;
         if (options().showActionButtons)
             rowCount++;
-        if (options().useEnhancedEditor)
+        if (options().showEditorToggleButton)
             rowCount++;
 
         int totalWidth = 200;
@@ -132,7 +132,7 @@ public abstract class AbstractSignEditScreenMixin extends Screen {
         }
 
         // Enhanced editor toggle button
-        if (options().useEnhancedEditor) {
+        if (options().showEditorToggleButton) {
             CycleButton<@NotNull Boolean> statusButton = CycleButton
                     .onOffBuilder(SignEdit.enhancedEditing)
                     .create(

@@ -14,7 +14,9 @@
 
   "option.signedit.general": "General",
   "option.signedit.general.useEnhancedEditor": "Use Enhanced Editor",
-  "option.signedit.general.useEnhancedEditor.tooltip": "Whether enhanced editing should be enabled by default.",
+  "option.signedit.general.useEnhancedEditor.tooltip": "Whether enhanced editing should be enabled when opening the sign editor.",
+  "option.signedit.general.showEditorToggleButton": "Show Editor Toggle Button",
+  "option.signedit.general.showEditorToggleButton.tooltip": "Whether to show a button to toggle enhanced editing.",
   "option.signedit.general.showActionButtons": "Show Quick Action Buttons",
   "option.signedit.general.showActionButtons.tooltip": "Whether to show the quick action buttons in the sign editor.",
   "option.signedit.general.actionButtonsCloseUi": "Action Buttons Close UI",
