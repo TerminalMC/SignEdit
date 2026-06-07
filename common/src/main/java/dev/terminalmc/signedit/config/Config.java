@@ -64,6 +64,9 @@ public class Config {
 
         public static final boolean showLineBreakIndicatorDefault = false;
         public boolean showLineBreakIndicator = showLineBreakIndicatorDefault;
+
+        public static final boolean saveOnEscapeDefault = true;
+        public boolean saveOnEscape = saveOnEscapeDefault;
     }
 
     // Instance management

@@ -19,6 +19,7 @@ package dev.terminalmc.signedit.mixin.gui;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import dev.terminalmc.signedit.SignEdit;
+import dev.terminalmc.signedit.util.inject.ISignScreen;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.CycleButton;
 import net.minecraft.client.gui.components.events.GuiEventListener;
@@ -41,7 +42,7 @@ import static dev.terminalmc.signedit.config.Config.options;
 import static dev.terminalmc.signedit.util.Localization.localized;
 
 @Mixin(AbstractSignEditScreen.class)
-public abstract class AbstractSignEditScreenMixin extends Screen {
+public abstract class AbstractSignEditScreenMixin extends Screen implements ISignScreen {
 
     protected AbstractSignEditScreenMixin(Component title) {
         super(title);
@@ -56,7 +57,7 @@ public abstract class AbstractSignEditScreenMixin extends Screen {
 
     /**
      * On creation of an {@link AbstractSignEditScreen}, resets the value of
-     * {@link SignEdit#enhancedEditing}.
+     * {@link SignEdit#enhancedEditing} to the default value and stores the original sign text.
      */
     @Inject(
             method = "<init>(Lnet/minecraft/world/level/block/entity/SignBlockEntity;ZZLnet/minecraft/network/chat/Component;)V",
@@ -65,11 +66,14 @@ public abstract class AbstractSignEditScreenMixin extends Screen {
     private void afterConstructor(
             SignBlockEntity sign,
             boolean isFrontText,
-            boolean isFiltered,
+            boolean shouldFilter,
             Component title,
             CallbackInfo ci
     ) {
         SignEdit.enhancedEditing = options().useEnhancedEditor;
+
+        SignEdit.originalLines = new String[messages.length];
+        System.arraycopy(messages, 0, SignEdit.originalLines, 0, messages.length);
     }
 
     /**
@@ -97,7 +101,7 @@ public abstract class AbstractSignEditScreenMixin extends Screen {
 
         int totalWidth = 200;
         int buttonHeight = 20;
-        int spaceX = 10;
+        int spaceX = 5;
         int spaceY = 2;
         int rowHeight = buttonHeight + spaceY;
         int baseX = width / 2 - 100;
@@ -106,27 +110,50 @@ public abstract class AbstractSignEditScreenMixin extends Screen {
         // Quick-action buttons
         if (options().showActionButtons) {
             int movingX = baseX;
-            int buttonWidth = (totalWidth - spaceX * 2) / 3;
+            int buttonWidth = (totalWidth - spaceX * 2) / 4;
 
+            // Copy
             Button copyButton =
-                    Button.builder(localized("button", "copy"), (button) -> signEdit$copyText())
+                    Button.builder(
+                                    localized("button", "copy"),
+                                    (button) -> signEdit$copyText()
+                            )
                             .bounds(movingX, movingY, buttonWidth, buttonHeight)
                             .build();
             original.call(instance, copyButton);
             movingX += buttonWidth + spaceX;
 
+            // Insert
             Button insertButton =
-                    Button.builder(localized("button", "insert"), (button) -> signEdit$insertText())
+                    Button.builder(
+                                    localized("button", "insert"),
+                                    (button) -> signEdit$insertText()
+                            )
                             .bounds(movingX, movingY, buttonWidth, buttonHeight)
                             .build();
             original.call(instance, insertButton);
-            movingX = baseX + totalWidth - buttonWidth;
+            movingX = baseX + totalWidth - buttonWidth * 2 - spaceX;
 
+            // Erase
             Button eraseButton =
-                    Button.builder(localized("button", "erase"), (button) -> signEdit$eraseText())
+                    Button.builder(
+                                    localized("button", "erase"),
+                                    (button) -> signEdit$eraseText()
+                            )
                             .bounds(movingX, movingY, buttonWidth, buttonHeight)
                             .build();
             original.call(instance, eraseButton);
+            movingX += buttonWidth + spaceX;
+
+            // Revert
+            Button revertButton =
+                    Button.builder(
+                                    localized("button", "revert"),
+                                    (button) -> signEdit$revertText(true)
+                            )
+                            .bounds(movingX, movingY, buttonWidth, buttonHeight)
+                            .build();
+            original.call(instance, revertButton);
 
             movingY += rowHeight;
         }
@@ -192,6 +219,26 @@ public abstract class AbstractSignEditScreenMixin extends Screen {
         if (signEdit$hasText()) {
             Arrays.fill(messages, "");
             signEdit$finish();
+        }
+    }
+
+    /**
+     * Reverts the sign text to {@link SignEdit#originalLines}.
+     */
+    @Unique
+    @Override
+    public void signEdit$revertText(boolean isManual) {
+        if (SignEdit.originalLines != null) {
+            System.arraycopy(
+                    SignEdit.originalLines,
+                    0,
+                    messages,
+                    0,
+                    Math.min(SignEdit.originalLines.length, messages.length)
+            );
+            if (isManual) {
+                signEdit$finish();
+            }
         }
     }
 

@@ -21,6 +21,8 @@ import me.shedaniel.clothconfig2.api.ConfigBuilder;
 import me.shedaniel.clothconfig2.api.ConfigCategory;
 import me.shedaniel.clothconfig2.api.ConfigEntryBuilder;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.network.chat.CommonComponents;
+import net.minecraft.network.chat.Component;
 
 import static dev.terminalmc.signedit.util.Localization.localized;
 
@@ -91,6 +93,20 @@ public class ClothScreenProvider {
                 .setTooltip(localized("option", "general.showLineBreakIndicator.tooltip"))
                 .setDefaultValue(Config.Options.showLineBreakIndicatorDefault)
                 .setSaveConsumer(val -> options.showLineBreakIndicator = val)
+                .build());
+
+        general.addEntry(eb.startBooleanToggle(
+                        localized("option", "general.saveOnEscape"),
+                        options.saveOnEscape
+                )
+                .setTooltip(localized(
+                        "option",
+                        "general.saveOnEscape.tooltip",
+                        Component.translatable("key.keyboard.escape").getString(),
+                        CommonComponents.GUI_DONE.getString()
+                        ))
+                .setDefaultValue(Config.Options.saveOnEscapeDefault)
+                .setSaveConsumer(val -> options.saveOnEscape = val)
                 .build());
 
         return builder.build();

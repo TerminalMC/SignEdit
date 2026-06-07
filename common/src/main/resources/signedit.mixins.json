@@ -12,7 +12,8 @@
   "client": [
     "copy.SignBlockMixin",
     "edit.AbstractSignEditScreenMixin",
-    "gui.AbstractSignEditScreenMixin"
+    "gui.AbstractSignEditScreenMixin",
+    "gui.ScreenMixin"
   ],
   "server": [
   ],

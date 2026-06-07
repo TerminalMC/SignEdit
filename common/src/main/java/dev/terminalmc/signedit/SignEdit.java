@@ -41,6 +41,7 @@ public class SignEdit {
     public static boolean enhancedEditing;
 
     public static String[] copiedLines;
+    public static String[] originalLines;
 
     private SignEdit() {
         throw new UnsupportedOperationException("This class cannot be instantiated.");
