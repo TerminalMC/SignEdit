@@ -1,0 +1,37 @@
+{
+  "signtweaks.name": "SignTweaks",
+
+  "message.signtweaks.viewModrinth": "View on Modrinth",
+  "message.signtweaks.installCloth": "Install Cloth Config API to access mod options",
+  "message.signtweaks.configScreenDisabled": "Config screen is not available on this version.",
+
+  "message.signtweaks.copied": "Text copied from sign!",
+
+  "button.signtweaks.enhancedEditing": "Enhanced Editing",
+  "button.signtweaks.copy": "Copy",
+  "button.signtweaks.insert": "Insert",
+  "button.signtweaks.erase": "Erase",
+  "button.signtweaks.revert": "Revert",
+
+  "option.signtweaks.general": "General",
+  "option.signtweaks.general.useEnhancedEditor": "Use Enhanced Editor",
+  "option.signtweaks.general.useEnhancedEditor.tooltip": "Whether enhanced editing should be enabled when opening the sign editor.",
+  "option.signtweaks.general.showEditorToggleButton": "Show Editor Toggle Button",
+  "option.signtweaks.general.showEditorToggleButton.tooltip": "Whether to show a button to toggle enhanced editing.",
+  "option.signtweaks.general.showActionButtons": "Show Quick Action Buttons",
+  "option.signtweaks.general.showActionButtons.tooltip": "Whether to show the quick action buttons in the sign editor.",
+  "option.signtweaks.general.actionButtonsCloseUi": "Action Buttons Close UI",
+  "option.signtweaks.general.actionButtonsCloseUi.tooltip": "Whether clicking the quick action buttons should close the sign editor.",
+  "option.signtweaks.general.showLineBreakIndicator": "Show Line Breaks",
+  "option.signtweaks.general.showLineBreakIndicator.tooltip": "Whether to show a symbol where a line is broken manually rather than automatically.",
+  "option.signtweaks.general.blockMovementKeys": "Block Movement Keys",
+  "option.signtweaks.general.blockMovementKeys.tooltip": "Whether to block input from movement keys that are held down when opening the sign editor, until the keys are released.",
+  "option.signtweaks.general.saveOnEscape": "Save On Escape",
+  "option.signtweaks.general.saveOnEscape.tooltip": "Whether to save the sign content when exiting by pressing the '%s' key rather than clicking the '%s' button.",
+  "option.signtweaks.general.editCondition": "Edit Condition",
+  "option.signtweaks.general.editCondition.tooltip": "Additional condition to open the sign editor when right-clicking.",
+  "option.signtweaks.general.editCondition.ALWAYS": "No Condition",
+  "option.signtweaks.general.editCondition.SNEAKING": "Only if Sneaking",
+  "option.signtweaks.general.editCondition.NOT_SNEAKING": "Only if not Sneaking",
+  "option.signtweaks.general.editCondition.NEVER": "Never Edit"
+}

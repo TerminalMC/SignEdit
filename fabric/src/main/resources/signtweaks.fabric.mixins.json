@@ -1,0 +1,19 @@
+{
+  "required": true,
+  "minVersion": "${mixin_version_min}",
+  "package": "dev.terminalmc.signtweaks.mixin",
+  "compatibilityLevel": "JAVA_${java_version}",
+  "plugin": "dev.terminalmc.signtweaks.util.MixinConfigPlugin",
+  "mixinextras": {
+    "minVersion": "${mixinextras_version_min}"
+  },
+  "mixins": [
+  ],
+  "client": [
+  ],
+  "server": [
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

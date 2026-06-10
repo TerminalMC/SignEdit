@@ -2,11 +2,11 @@
 <div align="center"><center>
 
 <!--suppress CheckImageSize -->
-<img alt="Icon" width=100 src="./common/src/main/resources/assets/signedit/icon.png">
+<img alt="Icon" width=100 src="./common/src/main/resources/assets/signtweaks/icon.png">
 
-## SignEdit
+## SignTweaks
 
-Enhances the built-in sign editor.
+A collection of tweaks to improve the sign editing experience.
 
 [![Environment](https://img.shields.io/badge/Environment-Client-blue?logo=data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAABhWlDQ1BJQ0MgcHJvZmlsZQAAKJF9kT1Iw0AYht+malUqDnYQEclQneyiIo6likWwUNoKrTqYXPoHTRqSFBdHwbXg4M9i1cHFWVcHV0EQ/AFxdnBSdJESv0sKLWI8uLuH97735e47QGhUmGp2RQFVs4xUPCZmc6ti4BU9CKCP1jGJmXoivZiB5/i6h4/vdxGe5V335xhQ8iYDfCJxlOmGRbxBPLtp6Zz3iUOsJCnE58STBl2Q+JHrsstvnIsOCzwzZGRS88QhYrHYwXIHs5KhEs8QhxVVo3wh67LCeYuzWqmx1j35C4N5bSXNdZqjiGMJCSQhQkYNZVRgIUK7RoqJFJ3HPPwjjj9JLplcZTByLKAKFZLjB/+D3701C9NTblIwBnS/2PbHOBDYBZp12/4+tu3mCeB/Bq60tr/aAOY+Sa+3tfARMLgNXFy3NXkPuNwBhp90yZAcyU9TKBSA9zP6phwwdAv0r7l9a53j9AHIUK+Wb4CDQ2CiSNnrHu/u7ezbvzWt/v0ATphymIBZ6aQAAAAGYktHRAAKAAwAGd6C8noAAAAJcEhZcwAADdcAAA3XAUIom3gAAAAHdElNRQfoBgcOHRYlcgoRAAABRklEQVR42u2YMUoDQRRAX0axUzCteIZ4hKn0FDmFhalSWKkgnkHt9AQWwhzBNr2tBGNno82ACwm6EZvxvwdTzP8s7P8zu8w8EJHIDABKKfvAFXAIbP/zmt+AR2CSc54NavFPwDDY4s+BUaorPwy4+3eBy1S3fVSOUoBv/jt2UmMv/A6cAHt1TGqsb36JzcYaMM05X3Tm56UUgLOe+SVa2wE3K2LXa+Sbb8BgRWxjjXzzDRj/EBv3fOarY6WUj8Z+glPgtlPcKbDVM998A/6cVM/GUXlN9WIQlYdUDwvzgMW/AMcp5zwDRsA9sAhQ+AK4Aw5yzs8aEZHY6AR1gjpBnaBOsLHrsE6wM9cJohPUCeoE0Qn+Hp0gOkGdoE5QRMKiE9QJ6gR1gjrBxq7DOsHOXCeITlAnqBNEJ/h7dILoBHWCOkERCcsncuextWq5TzoAAAAASUVORK5CYII=)]()
 [![Latest Minecraft](https://img.shields.io/modrinth/game-versions/c7xDMxha?label=Latest%20Minecraft&color=%2300AF5C&logo=data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAABhWlDQ1BJQ0MgcHJvZmlsZQAAKJF9kT1Iw0AYht+malUqDnYQEclQneyiIo6likWwUNoKrTqYXPoHTRqSFBdHwbXg4M9i1cHFWVcHV0EQ/AFxdnBSdJESv0sKLWI8uLuH97735e47QGhUmGp2RQFVs4xUPCZmc6ti4BU9CKCP1jGJmXoivZiB5/i6h4/vdxGe5V335xhQ8iYDfCJxlOmGRbxBPLtp6Zz3iUOsJCnE58STBl2Q+JHrsstvnIsOCzwzZGRS88QhYrHYwXIHs5KhEs8QhxVVo3wh67LCeYuzWqmx1j35C4N5bSXNdZqjiGMJCSQhQkYNZVRgIUK7RoqJFJ3HPPwjjj9JLplcZTByLKAKFZLjB/+D3701C9NTblIwBnS/2PbHOBDYBZp12/4+tu3mCeB/Bq60tr/aAOY+Sa+3tfARMLgNXFy3NXkPuNwBhp90yZAcyU9TKBSA9zP6phwwdAv0r7l9a53j9AHIUK+Wb4CDQ2CiSNnrHu/u7ezbvzWt/v0ATphymIBZ6aQAAAAGYktHRAAKAAwAGd6C8noAAAAJcEhZcwAADdcAAA3XAUIom3gAAAAHdElNRQfoBgcOGBJfaDpNAAAE40lEQVR42u2bbYhUVRjHf/tiaRFkWVEaZJG2YNq2mYRFf0o/RPatDYk0ssAIKi0zbfMtXKxILRJqowy3FyqjD2ZvlPEQFlLh1qpIRVLWEq7p+rK11tpuH+ZZmqZ7Z3Zm79x5aZ5vc8+9557/f87//5zznBmoxP87qgr1YjMbBpzpHzsl9ZY9AQ56JjAbmAqM8KYeYCvQCrweJxlVMQGvAhqBVcD5GW7fAywGNkrqL3kCzKwBWAtcleWjnwPzJX1WkgSY2TnAMuB2oCbHbvqBN4EHJP1YEgSY2QjgHqAJOCWibn8HngZWSuouWgLM7AbgKWBsniZWB/AQ8FJU/lAVEfDLXOdXxmTeX7g/fFpQApJ0fgdQHXMKj8QfqnIEfhJwd8Q6H6o/NEs6mlcCPJ/fCDwOnFdkq9oO4BHgeUl9kRNgZpNd51OLfHn/pfvD1kgIMLPRwNIC6Xyo/rBQ0g85E2Bmc4HVwMklutn7DbhfUkvYDdVpwA/3fF5D6UYNMNax5CyBc4Fm4JZCbp9ziM3AvZL2RGWCU9wEryhy4NvdBD/JyQTNrAa4E2iRdDylrRqY5TNidBGmwSZfJveljLsWmAs8K+mvTB5wFrAO2GVmM5IbJPVJ2gCMAxYB3UUAvAd4DKiTtCEA/DSfFev4pwKVdgZMBL5OuvSeO+nuEH9YBdxcAH/oB14FFkv6KWBsdZ7Brku6PElSeyYCLgHaUi4fB9YDD0vaX8ybITMbCTwIzAdOSGmul/RVLgQMRJdPt7WS/izAdvjnJJ33B+h8DrASOCPk+f8QkO3KbiTwKLDDzBpTGyW9DVwEzAOORLygWQGMk9QaAH6af2ktacAPOgukmwGpscWn4o6Afs4GlhNNSWyBpL0B7xgPPAHMGGR/Q5ZAUAz4wxJJnQH91bs/XJ0l+G1O7raAPk8DFoboPHYCUv3hSUl/hPjDWuCCDP3sBZaE6HwYcFsGnWdFQJS7uwF/aE/jD3XuD4cDnu92nY9Po/Ptueg8nx6QyR/uS827/o7TfYt9l38Jr3hpa1+IzlcD10cwprxKIMwfWoBlkg4EvGuCz46dISSt8CVsbUTjiZ2AgTjk8gj0hxCdNwOjIh5HXj0gXZyabv0Qks9HxTGwWuKNC4E3zOxDYKakg0lp7TVgetw7qULV+KYDY5I+jykE+EISUDRRIaBCQIWACgEVAioE/DuOlTHeY4Mh4JcyJqAjIwGSDgNHyxD8kaAfUIR5wAdlSMD72ZhgM9BbRuB7HNPgCPA985wyIaHXd57tWaVBSS8DU4D2EgbfDlwuaVNO6wBJbUADibLU/hIC3kXi8HZyagUoNTIWRPyI/Dkz20j4mVuxRNozzJwISCKiC1hkZutJ1OUbiwz8RyQOUnZm81DWJTFJ3wI3mdm1wBpgYoGBf0Pi+P6dWPcCkrYA9cCtQGcBgB8kccgyIVfwOc2AFBL6gFYz2+SmMw84MYa09iLQJOnXoXYWSVVY0iH3hxd8wdGYR53Pk7Qrqg4jLYtL+s794Rr3h0kRdb2bxBH5uyVRD5D0MXCp+8O+IXR1wGV1cT7ARz4DQvzhLWCBryGGZ6HzZ4ClvjvNW+T9ZMj/47M8af0wK8Mjm13n38eRSmI7GvOfuMx2ItYE3NJG4jjd4sylsdcEHWCDG1uyyTXEDb4SlYC/AW0t3IQpiA17AAAAAElFTkSuQmCC)](https://modrinth.com/project/c7xDMxha/versions)
@@ -16,24 +16,50 @@ Enhances the built-in sign editor.
 
 [![Available on Modrinth](https://img.shields.io/modrinth/dt/c7xDMxha?label=Available%20on%20Modrinth&logo=modrinth&logoColor=%2300AF5C)](https://modrinth.com/project/c7xDMxha)
 [![Available on CurseForge](https://img.shields.io/curseforge/dt/1297143?label=Available%20on%20CurseForge&logo=curseforge)](https://curseforge.com/minecraft/mc-mods/sign-edit)
-[![Available on GitHub](https://img.shields.io/github/downloads/TerminalMC/SignEdit/total?label=Available%20on%20GitHub&logo=github&logoColor=white)](https://github.com/TerminalMC/SignEdit)
+[![Available on GitHub](https://img.shields.io/github/downloads/TerminalMC/SignTweaks/total?label=Available%20on%20GitHub&logo=github&logoColor=white)](https://github.com/TerminalMC/SignTweaks)
 
 </center></div>
 
 ### Features
 
+All features can be turned on or off at will using the config screen.
+
+#### Enhanced Editor
+
 - Automatic line wrapping
-- Manual line breaks with indicators
+- Manual line breaks with an optional indicator
 - Continuous cursor travel using arrow keys
 - Stepped travel using home and end keys
 - Multi-line automatic shifting
 - Multi-line selection
 - Multi-line copy and paste
-- Quick-action buttons for copying, replacing and clearing all text
+
+#### Quick-Action Buttons
+
+- `Copy` all text to internal memory, retaining line-by-line formatting.
+- `Insert` copied text, replacing any existing content.
+- `Erase` all text.
+- `Revert` the text to the original state when the sign editor was opened.
+- Quick-action buttons can be configured to instantly close the screen when pressed.
+
+#### Block Held Keys
+
+- Block input from any keys that were held down when the editor was opened, until they are released.
+- For example, if you have sneak bound to Z, this will prevent spamming Z when opening the editor.
+
+#### Revert On Escape
+
+- When exiting the editor by pressing the `ESC` key rather than clicking the `Done` button, undo any
+  changes made since opening the editor.
+
+#### Edit Condition
+
+- Skip opening the editor when placing or right-clicking a sign, optionally depending on whether you
+  are sneaking or not.
 
 ### Compatibility
 
-The following mods are explicitly incompatible with SignEdit, due to modifying the same code.
+The following mods are explicitly incompatible with SignTweaks, due to modifying the same code.
 
 - [Chat Calc](https://modrinth.com/project/o2oFdqXS) (`chatcalc`) by Emirlol.
 - [Improved Sign Editing](https://modrinth.com/project/EWQifKYI) (`improvedsignediting`) by Serilum.
@@ -43,12 +69,12 @@ The following mods are explicitly incompatible with SignEdit, due to modifying t
 Beyond this list, you should generally assume that other mods altering the sign editor will not be
 compatible.
 
-If you encounter an unexpected incompatibility, please report it.
+If you encounter an *unexpected* incompatibility, please report it.
 
 ### Contact
 
 [![Discord](https://img.shields.io/discord/1103153365216669797?logo=discord&label=Discord%20Server&color=%235865F2)](https://discord.terminalmc.dev)
 
-[![Issues](https://img.shields.io/github/issues/TerminalMC/SignEdit?logo=github&label=GitHub%20Issues)](https://github.com/TerminalMC/SignEdit/issues)
+[![Issues](https://img.shields.io/github/issues/TerminalMC/SignTweaks?logo=github&label=GitHub%20Issues)](https://github.com/TerminalMC/SignTweaks/issues)
 
-[![License](https://img.shields.io/github/license/TerminalMC/SignEdit?label=License&logo=github&logoColor=white)](https://github.com/TerminalMC/SignEdit/blob/HEAD/LICENSE.txt)
+[![License](https://img.shields.io/github/license/TerminalMC/SignTweaks?label=License&logo=github&logoColor=white)](https://github.com/TerminalMC/SignTweaks/blob/HEAD/LICENSE.txt)
