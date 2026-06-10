@@ -25,5 +25,11 @@
   "option.signedit.general.showLineBreakIndicator": "Show Line Breaks",
   "option.signedit.general.showLineBreakIndicator.tooltip": "Whether to show a symbol where a line is broken manually rather than automatically.",
   "option.signedit.general.saveOnEscape": "Save On Escape",
-  "option.signedit.general.saveOnEscape.tooltip": "Whether to save the sign content when exiting by pressing the '%s' key rather than clicking the '%s' button."
+  "option.signedit.general.saveOnEscape.tooltip": "Whether to save the sign content when exiting by pressing the '%s' key rather than clicking the '%s' button.",
+  "option.signedit.general.editCondition": "Edit Condition",
+  "option.signedit.general.editCondition.tooltip": "Additional condition to open the sign editor screen when right-clicking.",
+  "option.signedit.general.editCondition.ALWAYS": "No Condition",
+  "option.signedit.general.editCondition.SNEAKING": "Only if Sneaking",
+  "option.signedit.general.editCondition.NOT_SNEAKING": "Only if not Sneaking",
+  "option.signedit.general.editCondition.NEVER": "Never Edit"
 }

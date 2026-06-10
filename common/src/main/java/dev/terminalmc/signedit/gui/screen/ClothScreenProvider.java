@@ -109,6 +109,17 @@ public class ClothScreenProvider {
                 .setSaveConsumer(val -> options.saveOnEscape = val)
                 .build());
 
+        general.addEntry(eb.startEnumSelector(
+                        localized("option", "general.editCondition"),
+                        Config.EditCondition.class,
+                        options.editCondition
+                )
+                .setTooltip(localized("option", "general.editCondition.tooltip"))
+                .setEnumNameProvider(val -> localized("option", "general.editCondition." + val))
+                .setDefaultValue(Config.Options.editConditionDefault)
+                .setSaveConsumer(val -> options.editCondition = val)
+                .build());
+
         return builder.build();
     }
 }

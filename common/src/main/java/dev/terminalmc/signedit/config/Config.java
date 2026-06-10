@@ -40,6 +40,15 @@ public class Config {
         // Deserializer and self-instantiation only.
     }
 
+    // Enumerations
+
+    public enum EditCondition {
+        SNEAKING,
+        NOT_SNEAKING,
+        ALWAYS,
+        NEVER
+    }
+
     // Options
 
     public final Options options = new Options();
@@ -67,6 +76,9 @@ public class Config {
 
         public static final boolean saveOnEscapeDefault = true;
         public boolean saveOnEscape = saveOnEscapeDefault;
+
+        public static final EditCondition editConditionDefault = EditCondition.ALWAYS;
+        public EditCondition editCondition = editConditionDefault;
     }
 
     // Instance management

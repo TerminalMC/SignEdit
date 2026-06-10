@@ -48,14 +48,14 @@ public abstract class SignBlockMixin {
     public void onSignUse(
             ItemStack itemStack,
             BlockState state,
-            Level world,
+            Level level,
             BlockPos pos,
             Player player,
             InteractionHand hand,
             BlockHitResult hitResult,
             CallbackInfoReturnable<InteractionResult> cir
     ) {
-        if (world.getBlockEntity(pos) instanceof SignBlockEntity sign
+        if (level.getBlockEntity(pos) instanceof SignBlockEntity sign
                 && sign.isWaxed()
                 && itemStack.isEmpty()) {
             Component[] textLines = sign.getFrontText().getMessages(false);

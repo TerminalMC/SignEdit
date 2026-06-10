@@ -13,7 +13,8 @@
     "copy.SignBlockMixin",
     "edit.AbstractSignEditScreenMixin",
     "gui.AbstractSignEditScreenMixin",
-    "gui.ScreenMixin"
+    "gui.ScreenMixin",
+    "interact.ClientPacketListenerMixin"
   ],
   "server": [
   ],

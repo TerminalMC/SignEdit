@@ -6,6 +6,7 @@
 - Disabled the line break indicator by default.
 - Added an option to disable saving when exiting using the 'Escape' key.
 - Added a 'Revert' GUI button.
+- Added an option to conditionally prevent opening the sign editor.
 
 ## 1.2.0
 
