@@ -74,11 +74,11 @@ public class Config {
         public static final boolean showLineBreakIndicatorDefault = false;
         public boolean showLineBreakIndicator = showLineBreakIndicatorDefault;
 
-        public static final boolean blockMovementKeysDefault = true;
-        public boolean blockMovementKeys = blockMovementKeysDefault;
+        public static final boolean blockHeldKeysDefault = true;
+        public boolean blockHeldKeys = blockHeldKeysDefault;
 
-        public static final boolean saveOnEscapeDefault = true;
-        public boolean saveOnEscape = saveOnEscapeDefault;
+        public static final boolean revertOnEscapeDefault = false;
+        public boolean revertOnEscape = revertOnEscapeDefault;
 
         public static final EditCondition editConditionDefault = EditCondition.ALWAYS;
         public EditCondition editCondition = editConditionDefault;

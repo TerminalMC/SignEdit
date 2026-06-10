@@ -141,7 +141,7 @@ public abstract class AbstractSignEditScreenMixin extends Screen {
      */
     @WrapMethod(method = "keyPressed")
     private boolean wrapKeyPressed(KeyEvent event, Operation<Boolean> original) {
-        if (options().blockMovementKeys) {
+        if (options().blockHeldKeys) {
             for (KeyMapping keyMapping : SignTweaks.downKeys) {
                 if (keyMapping.matches(event)) {
                     signEdit$cancelKeyPressed = true;

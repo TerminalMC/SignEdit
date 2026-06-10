@@ -37,7 +37,7 @@ public interface ContainerEventHandlerMixin {
      */
     @WrapMethod(method = "keyReleased")
     default boolean wrapKeyReleased(KeyEvent event, Operation<Boolean> original) {
-        if (options().blockMovementKeys) {
+        if (options().blockHeldKeys) {
             SignTweaks.downKeys.removeIf(keyMapping -> keyMapping.matches(event));
         }
         return original.call(event);

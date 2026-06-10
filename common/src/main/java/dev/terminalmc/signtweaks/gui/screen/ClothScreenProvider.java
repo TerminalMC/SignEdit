@@ -97,26 +97,26 @@ public class ClothScreenProvider {
                 .build());
 
         general.addEntry(eb.startBooleanToggle(
-                        localized("option", "general.blockMovementKeys"),
-                        options.blockMovementKeys
+                        localized("option", "general.blockHeldKeys"),
+                        options.blockHeldKeys
                 )
-                .setTooltip(localized("option", "general.blockMovementKeys.tooltip"))
-                .setDefaultValue(Options.blockMovementKeysDefault)
-                .setSaveConsumer(val -> options.blockMovementKeys = val)
+                .setTooltip(localized("option", "general.blockHeldKeys.tooltip"))
+                .setDefaultValue(Options.blockHeldKeysDefault)
+                .setSaveConsumer(val -> options.blockHeldKeys = val)
                 .build());
 
         general.addEntry(eb.startBooleanToggle(
-                        localized("option", "general.saveOnEscape"),
-                        options.saveOnEscape
+                        localized("option", "general.revertOnEscape"),
+                        options.revertOnEscape
                 )
                 .setTooltip(localized(
                         "option",
-                        "general.saveOnEscape.tooltip",
+                        "general.revertOnEscape.tooltip",
                         Component.translatable("key.keyboard.escape").getString(),
                         CommonComponents.GUI_DONE.getString()
                         ))
-                .setDefaultValue(Config.Options.saveOnEscapeDefault)
-                .setSaveConsumer(val -> options.saveOnEscape = val)
+                .setDefaultValue(Config.Options.revertOnEscapeDefault)
+                .setSaveConsumer(val -> options.revertOnEscape = val)
                 .build());
 
         general.addEntry(eb.startEnumSelector(

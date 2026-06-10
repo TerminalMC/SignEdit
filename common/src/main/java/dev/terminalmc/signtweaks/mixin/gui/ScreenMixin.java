@@ -44,7 +44,7 @@ public abstract class ScreenMixin {
         //noinspection ConstantValue
         if (event.isEscape() && shouldCloseOnEsc()
                 && (Object) this instanceof AbstractSignEditScreen signScreen) {
-            if (!options().saveOnEscape) {
+            if (options().revertOnEscape) {
                 ((ISignScreen) signScreen).signEdit$revertText(false);
             }
         }

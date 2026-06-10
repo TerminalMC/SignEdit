@@ -20,7 +20,6 @@ import com.mojang.blaze3d.platform.Window;
 import dev.terminalmc.signtweaks.SignTweaks;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.Options;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.world.level.block.entity.SignBlockEntity;
 import org.spongepowered.asm.mixin.Mixin;
@@ -47,21 +46,8 @@ public abstract class LocalPlayerMixin {
     private void onOpenTextEdit(SignBlockEntity sign, boolean isFrontText, CallbackInfo ci) {
         Window window = Minecraft.getInstance().getWindow();
         SignTweaks.downKeys.clear();
-        if (options().blockMovementKeys) {
-
-            if (SignTweaks.checkKeys.isEmpty()) {
-                Options options = Minecraft.getInstance().options;
-                SignTweaks.checkKeys.add(options.keyUp);
-                SignTweaks.checkKeys.add(options.keyLeft);
-                SignTweaks.checkKeys.add(options.keyDown);
-                SignTweaks.checkKeys.add(options.keyRight);
-                SignTweaks.checkKeys.add(options.keyJump);
-                SignTweaks.checkKeys.add(options.keyShift);
-                SignTweaks.checkKeys.add(options.keySprint);
-                SignTweaks.checkKeys.add(options.keyUse);
-            }
-
-            for (KeyMapping keyMapping : SignTweaks.checkKeys) {
+        if (options().blockHeldKeys) {
+            for (KeyMapping keyMapping : Minecraft.getInstance().options.keyMappings) {
                 if (keyMapping.isDown()) {
                     SignTweaks.downKeys.add(keyMapping);
                 }
