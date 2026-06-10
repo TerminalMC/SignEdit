@@ -22,11 +22,15 @@ import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import dev.terminalmc.signedit.SignEdit;
 import dev.terminalmc.signedit.helper.FieldHelper;
 import dev.terminalmc.signedit.helper.ScreenHelper;
+import dev.terminalmc.signedit.mixin.input.ContainerEventHandlerMixin;
+import dev.terminalmc.signedit.mixin.input.LocalPlayerMixin;
+import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.font.TextFieldHelper;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.AbstractSignEditScreen;
+import net.minecraft.client.input.CharacterEvent;
 import net.minecraft.client.input.KeyEvent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.block.entity.SignBlockEntity;
@@ -44,6 +48,7 @@ import static dev.terminalmc.signedit.config.Config.options;
 
 @Debug(export = true)
 @Mixin(AbstractSignEditScreen.class)
+@SuppressWarnings("JavadocReference")
 public abstract class AbstractSignEditScreenMixin extends Screen {
 
     protected AbstractSignEditScreenMixin(Component title) {
@@ -74,6 +79,12 @@ public abstract class AbstractSignEditScreenMixin extends Screen {
     @Shadow
     @Final
     private boolean isFrontText;
+
+    @Unique
+    private static boolean signEdit$cancelKeyPressed;
+
+    @Unique
+    private static long signEdit$cancelKeyPressedTime;
 
     /**
      * Replaces the existing {@link TextFieldHelper} with a new {@link FieldHelper}.
@@ -122,10 +133,24 @@ public abstract class AbstractSignEditScreenMixin extends Screen {
     }
 
     /**
-     * Diverts key-presses to {@link ScreenHelper#keyPressed}.
+     * Blocks key-presses if required, otherwise redirects to {@link ScreenHelper#keyPressed}.
+     *
+     * @see LocalPlayerMixin#onOpenTextEdit
+     * @see ContainerEventHandlerMixin#wrapKeyReleased
+     * @see #wrapCharTyped
      */
     @WrapMethod(method = "keyPressed")
     private boolean wrapKeyPressed(KeyEvent event, Operation<Boolean> original) {
+        if (options().blockMovementKeys) {
+            for (KeyMapping keyMapping : SignEdit.downKeys) {
+                if (keyMapping.matches(event)) {
+                    signEdit$cancelKeyPressed = true;
+                    signEdit$cancelKeyPressedTime = System.nanoTime();
+                    return false;
+                }
+            }
+        }
+
         if (!SignEdit.enhancedEditing)
             return original.call(event);
 
@@ -139,6 +164,24 @@ public abstract class AbstractSignEditScreenMixin extends Screen {
             return super.keyPressed(event);
 
         return false;
+    }
+
+    /**
+     * Blocks the {@link AbstractSignEditScreen#charTyped} event associated with a blocked key
+     * press.
+     *
+     * @see #wrapKeyPressed
+     */
+    @WrapMethod(method = "charTyped")
+    private boolean wrapCharTyped(CharacterEvent event, Operation<Boolean> original) {
+        if (signEdit$cancelKeyPressed) {
+            signEdit$cancelKeyPressed = false;
+            // Cancel only if the most recent canceled press
+            // was less than 5 milliseconds ago
+            if (System.nanoTime() - signEdit$cancelKeyPressedTime < 5_000_000)
+                return false;
+        }
+        return original.call(event);
     }
 
     /**

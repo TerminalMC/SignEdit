@@ -7,6 +7,7 @@
 - Added an option to disable saving when exiting using the 'Escape' key.
 - Added a 'Revert' GUI button.
 - Added an option to conditionally prevent opening the sign editor.
+- Added an option to block movement key input until key release when opening the sign editor.
 
 ## 1.2.0
 

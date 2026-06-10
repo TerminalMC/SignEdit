@@ -24,7 +24,10 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
 import org.apache.logging.log4j.Logger;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class SignEdit {
 
@@ -37,6 +40,9 @@ public class SignEdit {
             .append(Component.literal("] ").withStyle(ChatFormatting.DARK_GRAY))
             .withStyle(ChatFormatting.GRAY);
     public static final List<KeyMapping> KEYBINDS = List.of();
+
+    public static final List<KeyMapping> checkKeys = new ArrayList<>();
+    public static final Set<KeyMapping> downKeys = new HashSet<>();
 
     public static boolean enhancedEditing;
 

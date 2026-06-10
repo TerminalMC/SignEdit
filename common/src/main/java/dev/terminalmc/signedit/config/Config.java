@@ -74,6 +74,9 @@ public class Config {
         public static final boolean showLineBreakIndicatorDefault = false;
         public boolean showLineBreakIndicator = showLineBreakIndicatorDefault;
 
+        public static final boolean blockMovementKeysDefault = true;
+        public boolean blockMovementKeys = blockMovementKeysDefault;
+
         public static final boolean saveOnEscapeDefault = true;
         public boolean saveOnEscape = saveOnEscapeDefault;
 

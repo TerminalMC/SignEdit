@@ -28,7 +28,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import static dev.terminalmc.signedit.config.Config.options;
 
 @Mixin(ClientPacketListener.class)
-public class ClientPacketListenerMixin {
+public abstract class ClientPacketListenerMixin {
 
     /**
      * Alters the {@link ClientboundOpenSignEditorPacket} handler to optionally prevent opening the

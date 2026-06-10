@@ -17,6 +17,7 @@
 package dev.terminalmc.signedit.gui.screen;
 
 import dev.terminalmc.signedit.config.Config;
+import dev.terminalmc.signedit.config.Config.Options;
 import me.shedaniel.clothconfig2.api.ConfigBuilder;
 import me.shedaniel.clothconfig2.api.ConfigCategory;
 import me.shedaniel.clothconfig2.api.ConfigEntryBuilder;
@@ -93,6 +94,15 @@ public class ClothScreenProvider {
                 .setTooltip(localized("option", "general.showLineBreakIndicator.tooltip"))
                 .setDefaultValue(Config.Options.showLineBreakIndicatorDefault)
                 .setSaveConsumer(val -> options.showLineBreakIndicator = val)
+                .build());
+
+        general.addEntry(eb.startBooleanToggle(
+                        localized("option", "general.blockMovementKeys"),
+                        options.blockMovementKeys
+                )
+                .setTooltip(localized("option", "general.blockMovementKeys.tooltip"))
+                .setDefaultValue(Options.blockMovementKeysDefault)
+                .setSaveConsumer(val -> options.blockMovementKeys = val)
                 .build());
 
         general.addEntry(eb.startBooleanToggle(
