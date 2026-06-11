@@ -57,6 +57,10 @@ All features can be turned on or off at will using the config screen.
 - Skip opening the editor when placing or right-clicking a sign, optionally depending on whether you
   are sneaking or not.
 
+#### Click-Through
+
+- [ClickThrough Plus](https://modrinth.com/project/fJi8nm80) is recommended for use with SignTweaks.
+
 ### Compatibility
 
 The following mods are explicitly incompatible with SignTweaks, due to modifying the same code.
