@@ -189,6 +189,8 @@ public class ClothScreenProvider {
                         }
                     }
                 })
+                .setInsertButtonEnabled(false)
+                .setDeleteButtonEnabled(false)
                 .setExpanded(true)
                 .build());
 
