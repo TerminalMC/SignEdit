@@ -28,6 +28,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
+import java.util.function.Supplier;
 
 public class Config {
 
@@ -47,6 +48,11 @@ public class Config {
         NOT_SNEAKING,
         ALWAYS,
         NEVER
+    }
+
+    public enum ConfigAction {
+        ACTION_1,
+        ACTION_2
     }
 
     // Options
@@ -82,6 +88,18 @@ public class Config {
 
         public static final EditCondition editConditionDefault = EditCondition.ALWAYS;
         public EditCondition editCondition = editConditionDefault;
+
+        public static final boolean useAutoFillDefault = false;
+        public boolean useAutoFill = useAutoFillDefault;
+
+        public static final Supplier<String[]> autoFillLinesDefault =
+                () -> new String[]{"", "", "", ""};
+        /**
+         * Always contains exactly four elements.
+         */
+        public String[] autoFillLines = autoFillLinesDefault.get();
+
+        public transient ConfigAction lastAutoFillAction = ConfigAction.ACTION_1;
     }
 
     // Instance management
@@ -107,6 +125,21 @@ public class Config {
         return instance;
     }
 
+    // Validation
+
+    private void validate() {
+        // Called after config is loaded
+        String[] newLines = Options.autoFillLinesDefault.get();
+        for (int i = 0; i < newLines.length; i++) {
+            if (i < options.autoFillLines.length) {
+                String oldLine = options.autoFillLines[i];
+                if (oldLine != null)
+                    newLines[i] = oldLine;
+            }
+        }
+        options.autoFillLines = newLines;
+    }
+
     // Cleanup
 
     private void cleanup() {
@@ -123,6 +156,8 @@ public class Config {
             if (config == null) {
                 backup();
                 SignTweaks.LOG.warn("Resetting config");
+            } else {
+                config.validate();
             }
         }
         return config != null ? config : new Config();

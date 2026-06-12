@@ -18,9 +18,12 @@ package dev.terminalmc.signtweaks.mixin.interact;
 
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
+import dev.terminalmc.signtweaks.SignTweaks;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientPacketListener;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.protocol.game.ClientboundOpenSignEditorPacket;
+import net.minecraft.network.protocol.game.ServerboundSignUpdatePacket;
 import net.minecraft.world.level.block.entity.SignBlockEntity;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -47,6 +50,24 @@ public abstract class ClientPacketListenerMixin {
             boolean isFrontText,
             Operation<Void> original
     ) {
+        if (System.nanoTime() - SignTweaks.signPlaceTime < 1_000_000_000L) { // 1 sec
+            SignTweaks.signPlaceTime = 0;
+            if (options().useAutoFill) {
+                ClientPacketListener connection = Minecraft.getInstance().getConnection();
+                if (connection != null) {
+                    connection.send(new ServerboundSignUpdatePacket(
+                            sign.getBlockPos(),
+                            isFrontText,
+                            options().autoFillLines[0],
+                            options().autoFillLines[1],
+                            options().autoFillLines[2],
+                            options().autoFillLines[3]
+                    ));
+                }
+                return;
+            }
+        }
+
         boolean allow = switch (options().editCondition) {
             case SNEAKING -> instance.isSteppingCarefully();
             case NOT_SNEAKING -> !instance.isSteppingCarefully();

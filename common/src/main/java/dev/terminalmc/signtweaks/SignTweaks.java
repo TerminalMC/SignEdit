@@ -47,6 +47,8 @@ public class SignTweaks {
     public static String[] copiedLines;
     public static String[] originalLines;
 
+    public static long signPlaceTime = 0;
+
     private SignTweaks() {
         throw new UnsupportedOperationException("This class cannot be instantiated.");
     }
@@ -55,7 +57,7 @@ public class SignTweaks {
      * Client initialization.
      */
     public static void init() {
-
+        Config.getAndSave();
     }
 
     /**

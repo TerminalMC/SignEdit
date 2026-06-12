@@ -1,6 +1,6 @@
 # Changelog
 
-## 1.2.1
+## 2.2.0
 
 - Disabled the enhanced editor toggle button by default.
 - Disabled the line break indicator by default.
@@ -8,6 +8,7 @@
 - Added a 'Revert' GUI button.
 - Added an option to conditionally prevent opening the sign editor.
 - Added an option to block movement key input until key release when opening the sign editor.
+- Added an option to automatically add text to placed signs.
 
 ## 1.2.0
 

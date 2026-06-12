@@ -16,14 +16,20 @@
 
 package dev.terminalmc.signtweaks.gui.screen;
 
+import dev.terminalmc.signtweaks.SignTweaks;
 import dev.terminalmc.signtweaks.config.Config;
+import dev.terminalmc.signtweaks.config.Config.ConfigAction;
 import dev.terminalmc.signtweaks.config.Config.Options;
 import me.shedaniel.clothconfig2.api.ConfigBuilder;
 import me.shedaniel.clothconfig2.api.ConfigCategory;
 import me.shedaniel.clothconfig2.api.ConfigEntryBuilder;
+import me.shedaniel.clothconfig2.gui.ClothConfigScreen;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
+
+import java.util.List;
 
 import static dev.terminalmc.signtweaks.util.Localization.localized;
 
@@ -33,6 +39,8 @@ public class ClothScreenProvider {
         throw new UnsupportedOperationException("This class cannot be instantiated.");
     }
 
+    private static ClothConfigScreen instance;
+
     /**
      * Builds and returns a Cloth Config options screen.
      *
@@ -41,6 +49,7 @@ public class ClothScreenProvider {
      * @throws NoClassDefFoundError if the Cloth Config API mod is not available.
      */
     static Screen getConfigScreen(Screen parent) {
+        instance = null;
         Config.Options options = Config.options();
 
         ConfigBuilder builder = ConfigBuilder.create()
@@ -130,6 +139,71 @@ public class ClothScreenProvider {
                 .setSaveConsumer(val -> options.editCondition = val)
                 .build());
 
-        return builder.build();
+        ConfigCategory autoFill = builder.getOrCreateCategory(localized("option", "autoFill"));
+
+        autoFill.addEntry(eb.startBooleanToggle(
+                        localized("option", "autoFill.useAutoFill"),
+                        options.useAutoFill
+                )
+                .setTooltip(localized("option", "autoFill.useAutoFill.tooltip"))
+                .setDefaultValue(Config.Options.useAutoFillDefault)
+                .setSaveConsumer(val -> options.useAutoFill = val)
+                .build());
+
+        autoFill.addEntry(eb.startStrList(
+                        localized("option", "autoFill.autoFillLines"),
+                        List.of(options.autoFillLines)
+                )
+                .setTooltip(localized("option", "autoFill.autoFillLines.tooltip"))
+                .setDefaultValue(List.of(Config.Options.autoFillLinesDefault.get()))
+                .setSaveConsumer(val -> {
+                    for (int i = 0; i < options.autoFillLines.length; i++) {
+                        if (i < val.size()) {
+                            options.autoFillLines[i] = val.get(i);
+                        } else {
+                            options.autoFillLines[i] = "";
+                        }
+                    }
+                })
+                .setExpanded(true)
+                .build());
+
+        autoFill.addEntry(eb.startEnumSelector(
+                        localized("option", "autoFill.useCopiedLines"),
+                        ConfigAction.class,
+                        options.lastAutoFillAction
+                )
+                .setTooltip(localized("option", "autoFill.useCopiedLines.tooltip"))
+                .setEnumNameProvider(val -> {
+                    if (val != options.lastAutoFillAction && val instanceof ConfigAction ca) {
+                        options.lastAutoFillAction = ca;
+                        if (SignTweaks.copiedLines != null) {
+                            for (int i = 0; i < options.autoFillLines.length; i++) {
+                                if (i < SignTweaks.copiedLines.length) {
+                                    options.autoFillLines[i] = SignTweaks.copiedLines[i];
+                                }
+                                else {
+                                    options.autoFillLines[i] = "";
+                                }
+                            }
+                            if (instance != null) {
+                                instance.save();
+                                Minecraft.getInstance().setScreen(parent);
+                            }
+                        }
+                    }
+                    return localized("option", "autoFill.useCopiedLines.value");
+                })
+                .setDefaultValue(options.lastAutoFillAction)
+                .setSaveConsumer(val -> {
+                })
+                .setRequirement(() -> SignTweaks.copiedLines != null)
+                .build());
+
+        Screen screen = builder.build();
+        if (screen instanceof ClothConfigScreen ccs) {
+            instance = ccs;
+        }
+        return screen;
     }
 }

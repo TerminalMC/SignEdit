@@ -33,5 +33,14 @@
   "option.signtweaks.general.editCondition.ALWAYS": "No Condition",
   "option.signtweaks.general.editCondition.SNEAKING": "Only if Sneaking",
   "option.signtweaks.general.editCondition.NOT_SNEAKING": "Only if not Sneaking",
-  "option.signtweaks.general.editCondition.NEVER": "Never Edit"
+  "option.signtweaks.general.editCondition.NEVER": "Never Edit",
+
+  "option.signtweaks.autoFill": "AutoFill",
+  "option.signtweaks.autoFill.useAutoFill": "Use AutoFill",
+  "option.signtweaks.autoFill.useAutoFill.tooltip": "Whether to automatically insert text and then close the sign editor when placing a sign.",
+  "option.signtweaks.autoFill.autoFillLines": "AutoFill Lines (4)",
+  "option.signtweaks.autoFill.autoFillLines.tooltip": "The lines of text to insert when AutoFill is in use.",
+  "option.signtweaks.autoFill.useCopiedLines": "Use Copied Lines",
+  "option.signtweaks.autoFill.useCopiedLines.tooltip": "Click to set the AutoFill Lines to the text copied from a sign.\nTo save the result, this will close the config screen.",
+  "option.signtweaks.autoFill.useCopiedLines.value": "Set"
 }
