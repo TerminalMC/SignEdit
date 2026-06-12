@@ -37,7 +37,7 @@ All features can be turned on or off at will using the config screen.
 #### Quick-Action Buttons
 
 - `Copy` all text to internal memory, retaining line-by-line formatting.
-- `Insert` copied text, replacing any existing content.
+- `Replace` all text with what was previously copied.
 - `Erase` all text.
 - `Revert` the text to the original state when the sign editor was opened.
 - Quick-action buttons can be configured to instantly close the screen when pressed.

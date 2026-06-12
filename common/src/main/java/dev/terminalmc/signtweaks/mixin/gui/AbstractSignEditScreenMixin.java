@@ -123,15 +123,15 @@ public abstract class AbstractSignEditScreenMixin extends Screen implements ISig
             original.call(instance, copyButton);
             movingX += buttonWidth + spaceX;
 
-            // Insert
-            Button insertButton =
+            // Replace
+            Button replaceButton =
                     Button.builder(
-                                    localized("button", "insert"),
-                                    (button) -> signEdit$insertText()
+                                    localized("button", "replace"),
+                                    (button) -> signEdit$replaceText()
                             )
                             .bounds(movingX, movingY, buttonWidth, buttonHeight)
                             .build();
-            original.call(instance, insertButton);
+            original.call(instance, replaceButton);
             movingX = baseX + totalWidth - buttonWidth * 2 - spaceX;
 
             // Erase
@@ -198,7 +198,7 @@ public abstract class AbstractSignEditScreenMixin extends Screen implements ISig
      * Replaces the sign text with {@link SignTweaks#copiedLines}.
      */
     @Unique
-    private void signEdit$insertText() {
+    private void signEdit$replaceText() {
         if (SignTweaks.copiedLines != null) {
             System.arraycopy(
                     SignTweaks.copiedLines,

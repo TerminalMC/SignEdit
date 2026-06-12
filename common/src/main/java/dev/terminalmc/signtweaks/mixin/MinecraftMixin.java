@@ -27,8 +27,11 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(Minecraft.class)
-public class MinecraftMixin {
+public abstract class MinecraftMixin {
 
+    /**
+     * Records the time when a sign is placed.
+     */
     @Inject(
             method = "startUseItem",
             at = @At(
@@ -38,7 +41,6 @@ public class MinecraftMixin {
     )
     private void onUseItemOn(CallbackInfo ci, @Local(name = "heldItem") ItemStack heldItem) {
         if (heldItem.getItem() instanceof SignItem) {
-            System.out.println("placed sign");
             SignTweaks.signPlaceTime = System.nanoTime();
         }
     }
