@@ -34,6 +34,8 @@
   "option.signtweaks.general.editCondition.SNEAKING": "Only if Sneaking",
   "option.signtweaks.general.editCondition.NOT_SNEAKING": "Only if not Sneaking",
   "option.signtweaks.general.editCondition.NEVER": "Never Edit",
+  "option.signtweaks.general.editWhenPlacingOnBlockEntity": "Block Entity Override",
+  "option.signtweaks.general.editWhenPlacingOnBlockEntity.tooltip": "If enabled, the sign editor will still open when sneak-placing or empty-hand sneak-clicking a sign on a block entity even if '%s' is set to '%s'.",
   "option.signtweaks.general.clickThrough": "Click Through Signs",
   "option.signtweaks.general.clickThrough.tooltip": "Whether to click through signs placed on block entities when not sneaking.",
 

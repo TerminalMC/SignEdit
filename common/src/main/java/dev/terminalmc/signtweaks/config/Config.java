@@ -28,6 +28,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
+import java.util.Objects;
 import java.util.function.Supplier;
 
 public class Config {
@@ -89,6 +90,9 @@ public class Config {
         public static final EditCondition editConditionDefault = EditCondition.ALWAYS;
         public EditCondition editCondition = editConditionDefault;
 
+        public static final boolean editWhenPlacingOnBlockEntityDefault = true;
+        public boolean blockEntitySneakEditOverride = editWhenPlacingOnBlockEntityDefault;
+
         public static final boolean clickThroughDefault = true;
         public boolean clickThrough = clickThroughDefault;
 
@@ -136,8 +140,7 @@ public class Config {
         for (int i = 0; i < newLines.length; i++) {
             if (i < options.autoFillLines.length) {
                 String oldLine = options.autoFillLines[i];
-                if (oldLine != null)
-                    newLines[i] = oldLine;
+                newLines[i] = Objects.requireNonNullElse(oldLine, "");
             }
         }
         options.autoFillLines = newLines;

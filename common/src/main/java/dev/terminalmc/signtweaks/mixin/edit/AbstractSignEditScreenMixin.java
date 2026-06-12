@@ -145,7 +145,7 @@ public abstract class AbstractSignEditScreenMixin extends Screen {
             for (KeyMapping keyMapping : SignTweaks.downKeys) {
                 if (keyMapping.matches(event)) {
                     signEdit$cancelKeyPressed = true;
-                    signEdit$cancelKeyPressedTime = System.nanoTime();
+                    signEdit$cancelKeyPressedTime = System.currentTimeMillis();
                     return false;
                 }
             }
@@ -178,7 +178,7 @@ public abstract class AbstractSignEditScreenMixin extends Screen {
             signEdit$cancelKeyPressed = false;
             // Cancel only if the most recent canceled press
             // was less than 5 milliseconds ago
-            if (System.nanoTime() - signEdit$cancelKeyPressedTime < 5_000_000)
+            if (System.currentTimeMillis() - signEdit$cancelKeyPressedTime < 5_000_000)
                 return false;
         }
         return original.call(event);

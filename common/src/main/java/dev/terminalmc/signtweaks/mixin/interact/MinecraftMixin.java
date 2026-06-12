@@ -36,6 +36,7 @@ import net.minecraft.world.phys.HitResult;
 import org.jspecify.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -102,22 +103,14 @@ public abstract class MinecraftMixin {
         BlockState wallBlockState = level.getBlockState(wallBlockPos);
         Block wallBlock = wallBlockState.getBlock();
 
-        // sign must be on a block entity
-        if (!(wallBlock instanceof BaseEntityBlock))
-            return;
-
         // sign must be on a block entity that it makes sense to click through to
-        if (wallBlock instanceof AbstractBannerBlock
-                || wallBlock instanceof AbstractSkullBlock
-                || wallBlock instanceof SignBlock
-                || wallBlock instanceof Portal
-                || wallBlock instanceof SculkShriekerBlock)
+        if (!isValidBlockEntity(wallBlock))
             return;
 
         // must not be sneaking
         if (player.isSteppingCarefully()) {
             // record the time to allow keeping the editor open
-            SignTweaks.avoidClickThroughTime = System.nanoTime();
+            SignTweaks.avoidClickThroughTime = System.currentTimeMillis();
             return;
         }
 
@@ -144,9 +137,42 @@ public abstract class MinecraftMixin {
                     target = "Lnet/minecraft/client/multiplayer/MultiPlayerGameMode;useItemOn(Lnet/minecraft/client/player/LocalPlayer;Lnet/minecraft/world/InteractionHand;Lnet/minecraft/world/phys/BlockHitResult;)Lnet/minecraft/world/InteractionResult;"
             )
     )
-    private void onUseItemOn(CallbackInfo ci, @Local(name = "heldItem") ItemStack heldItem) {
+    private void onUseItemOn(
+            CallbackInfo ci,
+            @Local(name = "heldItem") ItemStack heldItem,
+            @Local(name = "blockHit") BlockHitResult blockHit
+    ) {
         if (heldItem.getItem() instanceof SignItem) {
-            SignTweaks.signPlaceTime = System.nanoTime();
+            SignTweaks.signPlaceTime = System.currentTimeMillis();
+
+            BlockPos blockPos = blockHit.getBlockPos();
+            BlockState blockState = level.getBlockState(blockPos);
+            Block block = blockState.getBlock();
+
+            if (isValidBlockEntity(block)) {
+                SignTweaks.signPlaceOnBlockEntityTime = System.currentTimeMillis();
+            }
         }
+    }
+
+    @Unique
+    private boolean isValidBlockEntity(Block block) {
+        if (!(block instanceof BaseEntityBlock))
+            return false;
+
+        // generally, signs + anything that doesn't have a right-click interaction
+        if (block instanceof AbstractBannerBlock
+                || block instanceof AbstractSkullBlock
+                || block instanceof ConduitBlock
+                || block instanceof CreakingHeartBlock
+                || block instanceof SignBlock
+                || block instanceof Portal
+                || block instanceof SculkSensorBlock
+                || block instanceof SculkCatalystBlock
+                || block instanceof SculkShriekerBlock
+        )
+            return false;
+
+        return true;
     }
 }

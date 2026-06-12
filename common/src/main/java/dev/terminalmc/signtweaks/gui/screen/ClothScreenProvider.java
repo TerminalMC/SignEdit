@@ -19,6 +19,7 @@ package dev.terminalmc.signtweaks.gui.screen;
 import dev.terminalmc.signtweaks.SignTweaks;
 import dev.terminalmc.signtweaks.config.Config;
 import dev.terminalmc.signtweaks.config.Config.ConfigAction;
+import dev.terminalmc.signtweaks.config.Config.EditCondition;
 import dev.terminalmc.signtweaks.config.Config.Options;
 import me.shedaniel.clothconfig2.api.ConfigBuilder;
 import me.shedaniel.clothconfig2.api.ConfigCategory;
@@ -137,6 +138,20 @@ public class ClothScreenProvider {
                 .setEnumNameProvider(val -> localized("option", "general.editCondition." + val))
                 .setDefaultValue(Config.Options.editConditionDefault)
                 .setSaveConsumer(val -> options.editCondition = val)
+                .build());
+
+        general.addEntry(eb.startBooleanToggle(
+                        localized("option", "general.editWhenPlacingOnBlockEntity"),
+                        options.blockEntitySneakEditOverride
+                )
+                .setTooltip(localized(
+                        "option",
+                        "general.editWhenPlacingOnBlockEntity.tooltip",
+                        localized("option", "general.editCondition"),
+                        localized("option", "general.editCondition." + EditCondition.NOT_SNEAKING)
+                ))
+                .setDefaultValue(Options.editWhenPlacingOnBlockEntityDefault)
+                .setSaveConsumer(val -> options.blockEntitySneakEditOverride = val)
                 .build());
 
         general.addEntry(eb.startBooleanToggle(

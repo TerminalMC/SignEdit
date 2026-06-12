@@ -48,6 +48,7 @@ public class SignTweaks {
     public static String[] originalLines;
 
     public static long signPlaceTime = 0;
+    public static long signPlaceOnBlockEntityTime = 0;
     public static long avoidClickThroughTime = 0;
 
     private SignTweaks() {

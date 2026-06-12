@@ -50,13 +50,15 @@ public abstract class ClientPacketListenerMixin {
             boolean isFrontText,
             Operation<Void> original
     ) {
-        long timeNow = System.nanoTime();
+        long timeNow = System.currentTimeMillis();
         long timeSincePlace = timeNow - SignTweaks.signPlaceTime;
-        long timeSinceClickThrough = timeNow - SignTweaks.avoidClickThroughTime;
-        System.out.println("time since last clickthrough: " + timeSinceClickThrough);
+        SignTweaks.signPlaceTime = 0;
+        long timeSincePlaceOnBlockEntity = timeNow - SignTweaks.signPlaceOnBlockEntityTime;
+        SignTweaks.signPlaceOnBlockEntityTime = 0;
+        long timeSinceAvoidClickThrough = timeNow - SignTweaks.avoidClickThroughTime;
+        SignTweaks.avoidClickThroughTime = 0;
 
-        if (timeSincePlace < 1_000_000_000L) { // 1 sec
-            SignTweaks.signPlaceTime = 0;
+        if (timeSincePlace < 1_000L) {
             if (options().useAutoFill) {
                 ClientPacketListener connection = Minecraft.getInstance().getConnection();
                 if (connection != null) {
@@ -75,9 +77,26 @@ public abstract class ClientPacketListenerMixin {
 
         boolean allow = switch (options().editCondition) {
             case SNEAKING -> instance.isSteppingCarefully();
-            case NOT_SNEAKING -> !instance.isSteppingCarefully()
-                    // override when sneak-clicking to avoid click-through
-                    || timeSinceClickThrough < 1_000_000_000L; // 1 sec
+            case NOT_SNEAKING -> {
+                // if we're not sneaking, edit
+                if (!instance.isSteppingCarefully())
+                    yield true;
+
+                // if not overriding, don't edit
+                if (!options().blockEntitySneakEditOverride)
+                    yield false;
+
+                // if avoiding a click-through and not placing a sign, edit
+                if (timeSinceAvoidClickThrough < 1_000L && timeSincePlace > 1_000L)
+                    yield true;
+
+                // if placing sign on block entity, edit
+                if (timeSincePlaceOnBlockEntity < 1_000L)
+                    yield true;
+
+                // otherwise, don't edit
+                yield false;
+            }
             case ALWAYS -> true;
             case NEVER -> false;
         };
