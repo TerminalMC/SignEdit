@@ -50,7 +50,12 @@ public abstract class ClientPacketListenerMixin {
             boolean isFrontText,
             Operation<Void> original
     ) {
-        if (System.nanoTime() - SignTweaks.signPlaceTime < 1_000_000_000L) { // 1 sec
+        long timeNow = System.nanoTime();
+        long timeSincePlace = timeNow - SignTweaks.signPlaceTime;
+        long timeSinceClickThrough = timeNow - SignTweaks.avoidClickThroughTime;
+        System.out.println("time since last clickthrough: " + timeSinceClickThrough);
+
+        if (timeSincePlace < 1_000_000_000L) { // 1 sec
             SignTweaks.signPlaceTime = 0;
             if (options().useAutoFill) {
                 ClientPacketListener connection = Minecraft.getInstance().getConnection();
@@ -70,7 +75,9 @@ public abstract class ClientPacketListenerMixin {
 
         boolean allow = switch (options().editCondition) {
             case SNEAKING -> instance.isSteppingCarefully();
-            case NOT_SNEAKING -> !instance.isSteppingCarefully();
+            case NOT_SNEAKING -> !instance.isSteppingCarefully()
+                    // override when sneak-clicking to avoid click-through
+                    || timeSinceClickThrough < 1_000_000_000L; // 1 sec
             case ALWAYS -> true;
             case NEVER -> false;
         };

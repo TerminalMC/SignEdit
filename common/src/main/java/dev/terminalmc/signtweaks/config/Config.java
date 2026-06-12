@@ -89,6 +89,9 @@ public class Config {
         public static final EditCondition editConditionDefault = EditCondition.ALWAYS;
         public EditCondition editCondition = editConditionDefault;
 
+        public static final boolean clickThroughDefault = true;
+        public boolean clickThrough = clickThroughDefault;
+
         public static final boolean useAutoFillDefault = false;
         public boolean useAutoFill = useAutoFillDefault;
 

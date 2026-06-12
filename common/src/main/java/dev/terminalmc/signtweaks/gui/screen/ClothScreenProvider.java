@@ -139,6 +139,15 @@ public class ClothScreenProvider {
                 .setSaveConsumer(val -> options.editCondition = val)
                 .build());
 
+        general.addEntry(eb.startBooleanToggle(
+                        localized("option", "general.clickThrough"),
+                        options.clickThrough
+                )
+                .setTooltip(localized("option", "general.clickThrough.tooltip"))
+                .setDefaultValue(Options.clickThroughDefault)
+                .setSaveConsumer(val -> options.clickThrough = val)
+                .build());
+
         ConfigCategory autoFill = builder.getOrCreateCategory(localized("option", "autoFill"));
 
         autoFill.addEntry(eb.startBooleanToggle(

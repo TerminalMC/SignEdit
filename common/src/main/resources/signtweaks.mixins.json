@@ -10,14 +10,14 @@
   "mixins": [
   ],
   "client": [
-    "MinecraftMixin",
     "copy.SignBlockMixin",
     "edit.AbstractSignEditScreenMixin",
     "gui.AbstractSignEditScreenMixin",
     "gui.ScreenMixin",
     "input.ContainerEventHandlerMixin",
     "input.LocalPlayerMixin",
-    "interact.ClientPacketListenerMixin"
+    "interact.ClientPacketListenerMixin",
+    "interact.MinecraftMixin"
   ],
   "server": [
   ],

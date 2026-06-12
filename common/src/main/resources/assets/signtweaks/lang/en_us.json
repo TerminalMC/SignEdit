@@ -34,6 +34,8 @@
   "option.signtweaks.general.editCondition.SNEAKING": "Only if Sneaking",
   "option.signtweaks.general.editCondition.NOT_SNEAKING": "Only if not Sneaking",
   "option.signtweaks.general.editCondition.NEVER": "Never Edit",
+  "option.signtweaks.general.clickThrough": "Click Through Signs",
+  "option.signtweaks.general.clickThrough.tooltip": "Whether to click through signs placed on block entities when not sneaking.",
 
   "option.signtweaks.autoFill": "AutoFill",
   "option.signtweaks.autoFill.useAutoFill": "Use AutoFill",
