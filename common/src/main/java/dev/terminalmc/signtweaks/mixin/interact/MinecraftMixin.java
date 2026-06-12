@@ -106,13 +106,13 @@ public abstract class MinecraftMixin {
     )
     private void onUseItemOn(
             CallbackInfo ci,
-            @Local(name = "heldItem") ItemStack heldItem,
-            @Local(name = "blockHit") BlockHitResult blockHit
+            @Local ItemStack itemStack,
+            @Local BlockHitResult blockHitResult
     ) {
-        if (heldItem.getItem() instanceof SignItem) {
+        if (itemStack.getItem() instanceof SignItem) {
             SignTweaks.signPlaceTime = System.currentTimeMillis();
 
-            BlockPos blockPos = blockHit.getBlockPos();
+            BlockPos blockPos = blockHitResult.getBlockPos();
             BlockState blockState = level.getBlockState(blockPos);
             Block block = blockState.getBlock();
 

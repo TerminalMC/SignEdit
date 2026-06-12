@@ -2,7 +2,7 @@ import util.PropUtil
 
 plugins {
     id("multiloader-loader")
-    id("net.fabricmc.fabric-loom")
+    id("fabric-loom")
 }
 
 // Configure Fabric dependencies
@@ -10,16 +10,19 @@ dependencies {
     // Minecraft
     minecraft("com.mojang:minecraft:${minecraft_version}")
 
+    // Mappings
+    mappings(loom.officialMojangMappings())
+
     // MixinExtras
     if (mixinextras_jij_fabric == "true") {
         include(implementation(annotationProcessor("io.github.llamalad7:mixinextras-fabric:${mixinextras_version}")))
     }
 
     // Fabric Loader
-    implementation("net.fabricmc:fabric-loader:${fabric_loader_version}")
+    modImplementation("net.fabricmc:fabric-loader:${fabric_loader_version}")
 
     // Fabric API
-    implementation("net.fabricmc.fabric-api:fabric-api:${fabric_api_version}")
+    modImplementation("net.fabricmc.fabric-api:fabric-api:${fabric_api_version}")
 
     // Apply property-defined dependencies
     final selector = (String type, dep) -> {
@@ -28,16 +31,13 @@ dependencies {
                 return annotationProcessor(dep)
                 break
             case "api": //noinspection DependencyNotationArgument
-                return api(dep)
+                return modApi(dep)
                 break
             case "con": //noinspection DependencyNotationArgument
-                return compileOnly(dep)
+                return modCompileOnly(dep)
                 break
             case "imp": //noinspection DependencyNotationArgument
-                return implementation(dep)
-                break
-            case "inc": //noinspection DependencyNotationArgument
-                return include(dep)
+                return modImplementation(dep)
                 break
             case "-":
                 return dep
@@ -59,6 +59,9 @@ loom {
         afterEvaluate {
             validateAccessWidener.run()
         }
+    }
+    mixin {
+        defaultRefmapName.set("${mod_id}.refmap.json")
     }
     // Configure runs
     runs {

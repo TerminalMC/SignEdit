@@ -64,7 +64,7 @@ public abstract class SignBlockMixin {
                 lines[i] = textLines[i].getString();
             }
             SignTweaks.copiedLines = lines;
-            player.sendOverlayMessage(localized("message", "copied"));
+            player.displayClientMessage(localized("message", "copied"), true);
         }
     }
 }
