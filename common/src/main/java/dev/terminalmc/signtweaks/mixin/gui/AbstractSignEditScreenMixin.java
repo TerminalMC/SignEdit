@@ -101,7 +101,7 @@ public abstract class AbstractSignEditScreenMixin extends Screen implements ISig
 
         int totalWidth = 200;
         int buttonHeight = 20;
-        int spaceX = 5;
+        int spaceX = 4;
         int spaceY = 2;
         int rowHeight = buttonHeight + spaceY;
         int baseX = width / 2 - 100;
@@ -110,7 +110,7 @@ public abstract class AbstractSignEditScreenMixin extends Screen implements ISig
         // Quick-action buttons
         if (options().showActionButtons) {
             int movingX = baseX;
-            int buttonWidth = (totalWidth - spaceX * 2) / 4;
+            int buttonWidth = (totalWidth - spaceX * 3) / 4;
 
             // Copy
             Button copyButton =
