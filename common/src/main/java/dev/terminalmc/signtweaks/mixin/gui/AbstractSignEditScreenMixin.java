@@ -19,15 +19,16 @@ package dev.terminalmc.signtweaks.mixin.gui;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import dev.terminalmc.signtweaks.SignTweaks;
+import dev.terminalmc.signtweaks.gui.widget.UnfocusingButton;
 import dev.terminalmc.signtweaks.util.inject.ISignScreen;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.components.Button;
-import net.minecraft.client.gui.components.CycleButton;
+import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.AbstractSignEditScreen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.block.entity.SignBlockEntity;
-import org.jetbrains.annotations.NotNull;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -54,6 +55,9 @@ public abstract class AbstractSignEditScreenMixin extends Screen implements ISig
 
     @Shadow
     public abstract void onClose();
+
+    @Unique
+    private boolean signTweaks$isReloading;
 
     /**
      * On creation of an {@link AbstractSignEditScreen}, resets the value of
@@ -95,8 +99,6 @@ public abstract class AbstractSignEditScreenMixin extends Screen implements ISig
 
         int rowCount = 0;
         if (options().showActionButtons)
-            rowCount++;
-        if (options().showEditorToggleButton)
             rowCount++;
 
         int totalWidth = 200;
@@ -154,31 +156,45 @@ public abstract class AbstractSignEditScreenMixin extends Screen implements ISig
                             .bounds(movingX, movingY, buttonWidth, buttonHeight)
                             .build();
             original.call(instance, revertButton);
-
-            movingY += rowHeight;
-        }
-
-        // Enhanced editor toggle button
-        if (options().showEditorToggleButton) {
-            CycleButton<@NotNull Boolean> statusButton = CycleButton
-                    .onOffBuilder(SignTweaks.enhancedEditing)
-                    .create(
-                            baseX,
-                            movingY,
-                            totalWidth,
-                            buttonHeight,
-                            localized("button", "enhancedEditing"),
-                            (button, status) -> {
-                                if (SignTweaks.enhancedEditing != status) {
-                                    SignTweaks.enhancedEditing = status;
-                                    init();
-                                }
-                            }
-                    );
-            original.call(instance, statusButton);
         }
 
         // Add the 'Done' button last.
+        if (options().showEditorToggleButton) {
+            if (doneButton instanceof Button button) {
+                // reduce width to add space for editor toggle button
+                button.setWidth(button.getWidth() - spaceX - buttonHeight);
+                GuiEventListener result = original.call(instance, button);
+
+                // add editor toggle button
+                UnfocusingButton toggleButton = new UnfocusingButton(
+                        button.getX() + button.getWidth() + spaceX,
+                        button.getY(),
+                        buttonHeight, // square
+                        buttonHeight,
+                        Component.literal("\u270E").withStyle(SignTweaks.enhancedEditing // ✎
+                                ? ChatFormatting.GREEN
+                                : ChatFormatting.RED),
+                        (b) -> {
+                            SignTweaks.enhancedEditing = !SignTweaks.enhancedEditing;
+                            init();
+                        }
+                );
+                toggleButton.setTooltip(Tooltip.create(localized(
+                        "button",
+                        "enhancedEditing.tooltip." + (SignTweaks.enhancedEditing
+                                ? "enabled"
+                                : "disabled")
+                )));
+                original.call(instance, toggleButton);
+                return result;
+            } else {
+                SignTweaks.LOG.error(
+                        "Done button has wrong type! Expected '{}', got '{}'",
+                        Button.class,
+                        doneButton.getClass()
+                );
+            }
+        }
         return original.call(instance, doneButton);
     }
 
