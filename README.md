@@ -26,13 +26,13 @@ All features can be turned on or off at will using the config screen.
 
 #### Enhanced Editor
 
-- Automatic line wrapping
-- Manual line breaks with an optional indicator
-- Continuous cursor travel using arrow keys
-- Stepped travel using home and end keys
-- Multi-line automatic shifting
-- Multi-line selection
-- Multi-line copy and paste
+- Automatic line wrapping.
+- Manual line breaks with an optional indicator.
+- Continuous cursor travel using arrow keys.
+- Stepped travel using home and end keys.
+- Multi-line automatic shifting.
+- Multi-line selection.
+- Multi-line copy and paste.
 
 #### Quick-Action Buttons
 
@@ -60,10 +60,10 @@ All features can be turned on or off at will using the config screen.
 #### Click-Through
 
 - [ClickThrough Plus](https://modrinth.com/project/fJi8nm80) is recommended for use with SignTweaks.
-- If ClickThrough Plus is not installed, SignTweaks will use a basic click-through implementation to
-  allow clicking through signs to most block entities (including chests, furnaces etc.)
+- In case it is not available, SignTweaks includes a basic implementation that allows clicking
+  through wall signs, banners, item frames and paintings to most block entities.
 
-#### Auto Fill
+#### Auto-Fill
 
 - Automatically add text to signs when placing.
 
@@ -73,6 +73,7 @@ The following mods are explicitly incompatible with SignTweaks, due to modifying
 
 - [Chat Calc](https://modrinth.com/project/o2oFdqXS) (`chatcalc`) by Emirlol.
 - [Improved Sign Editing](https://modrinth.com/project/EWQifKYI) (`improvedsignediting`) by Serilum.
+- [Sign Copy](https://modrinth.com/project/cK4nxndh) (`signcopy`) by TerminalMC.
 - [Sign Edit Lite](https://modrinth.com/project/QvdBkyYv) (`signeditlite`) by pintergabor.
 - [Sign Tools](https://modrinth.com/project/31HqGqE1) (`signtools`) by DmitryLovin.
 

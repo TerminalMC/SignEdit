@@ -66,6 +66,8 @@ public class Config {
 
     public static class Options {
 
+        // General
+
         public static final boolean useEnhancedEditorDefault = true;
         public boolean useEnhancedEditor = useEnhancedEditorDefault;
 
@@ -90,11 +92,21 @@ public class Config {
         public static final EditCondition editConditionDefault = EditCondition.ALWAYS;
         public EditCondition editCondition = editConditionDefault;
 
-        public static final boolean editWhenPlacingOnBlockEntityDefault = true;
-        public boolean blockEntitySneakEditOverride = editWhenPlacingOnBlockEntityDefault;
+        public static final boolean blockEntitySneakEditOverrideDefault = true;
+        public boolean blockEntitySneakEditOverride = blockEntitySneakEditOverrideDefault;
 
-        public static final boolean clickThroughDefault = true;
-        public boolean clickThrough = clickThroughDefault;
+        // ClickThrough
+
+        public static final boolean clickThroughSignsDefault = true;
+        public boolean clickThroughSigns = clickThroughSignsDefault;
+
+        public static final boolean clickThroughBannersDefault = false;
+        public boolean clickThroughBanners = clickThroughBannersDefault;
+
+        public static final boolean clickThroughHangingEntitiesDefault = false;
+        public boolean clickThroughHangingEntities = clickThroughHangingEntitiesDefault;
+
+        // AutoFill
 
         public static final boolean useAutoFillDefault = false;
         public boolean useAutoFill = useAutoFillDefault;

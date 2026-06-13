@@ -24,14 +24,15 @@ import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.decoration.HangingEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.SignApplicator;
 import net.minecraft.world.item.SignItem;
 import net.minecraft.world.level.block.*;
-import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.entity.SignBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 import org.jspecify.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
@@ -44,6 +45,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import static dev.terminalmc.signtweaks.config.Config.options;
 
 @Mixin(Minecraft.class)
+@SuppressWarnings("JavadocReference")
 public abstract class MinecraftMixin {
 
     @Shadow
@@ -59,7 +61,8 @@ public abstract class MinecraftMixin {
     public LocalPlayer player;
 
     /**
-     * Rudimentary click-through implementation for signs.
+     * Allows clicking through signs, banners and hanging entities (item frames and paintings) to
+     * certain block entities when not sneaking.
      */
     @Inject(
             method = "startUseItem",
@@ -69,66 +72,30 @@ public abstract class MinecraftMixin {
             )
     )
     public void onGetItemInHand(CallbackInfo ci) {
-        // must be enabled
-        if (!options().clickThrough)
-            return;
 
-        // must not be holding dye/ink/honeycomb
-        // (can't use if sneaking so have to allow usage while standing)
-        if (player.getItemInHand(InteractionHand.MAIN_HAND).getItem() instanceof SignApplicator)
-            return;
+        if (hitResult instanceof BlockHitResult blockHitResult) {
+            // signs, banners
+            BlockPos hitBlockPos = blockHitResult.getBlockPos();
+            BlockState hitBlockState = level.getBlockState(hitBlockPos);
+            Block hitBlock = hitBlockState.getBlock();
 
-        // must be targeting some form of block
-        if (!(hitResult instanceof BlockHitResult blockHitResult))
-            return;
+            if (signTweaks$clickThroughSign(blockHitResult, hitBlockPos, hitBlockState, hitBlock))
+                return;
+            signTweaks$clickThroughBanner(blockHitResult, hitBlockPos, hitBlockState, hitBlock);
+        } else if (hitResult instanceof EntityHitResult entityHitResult) {
+            // item frames, paintings
+            Entity hitEntity = entityHitResult.getEntity();
+            BlockPos hitEntityPos = hitEntity.blockPosition();
 
-        BlockPos hitBlockPos = blockHitResult.getBlockPos();
-        BlockEntity hitBlockEntity = level.getBlockEntity(hitBlockPos);
-
-        // must be targeting a sign
-        if (!(hitBlockEntity instanceof SignBlockEntity))
-            return;
-
-        BlockState hitBlockState = level.getBlockState(hitBlockPos);
-        Block hitBlock = hitBlockState.getBlock();
-
-        // must be targeting a wall sign
-        if (!(hitBlock instanceof WallSignBlock))
-            return;
-
-        BlockPos wallBlockPos =
-                hitBlockPos.offset(hitBlockState.getValue(WallSignBlock.FACING)
-                        .getOpposite()
-                        .getUnitVec3i());
-        BlockState wallBlockState = level.getBlockState(wallBlockPos);
-        Block wallBlock = wallBlockState.getBlock();
-
-        // sign must be on a block entity that it makes sense to click through to
-        if (!isValidBlockEntity(wallBlock))
-            return;
-
-        // must not be sneaking
-        if (player.isSteppingCarefully()) {
-            // record the time to allow keeping the editor open
-            SignTweaks.avoidClickThroughTime = System.currentTimeMillis();
-            return;
+            signTweaks$clickThroughHangingEntity(entityHitResult, hitEntityPos, hitEntity);
         }
-
-        // must not have clickthrough plus
-        if (PlatformServices.getInstance().isModLoaded("clickthrough"))
-            return;
-
-        // retarget
-        hitResult = new BlockHitResult(
-                blockHitResult.getLocation(),
-                blockHitResult.getDirection(),
-                wallBlockPos,
-                false
-        );
     }
 
     /**
-     * Records the time when a sign is placed.
+     * Records the time when a sign is placed, to allow subsequent conditional opening of the
+     * editor.
+     *
+     * @see ClientPacketListenerMixin#wrapOpenTextEdit
      */
     @Inject(
             method = "startUseItem",
@@ -149,18 +116,155 @@ public abstract class MinecraftMixin {
             BlockState blockState = level.getBlockState(blockPos);
             Block block = blockState.getBlock();
 
-            if (isValidBlockEntity(block)) {
+            if (signTweaks$isClickableBlockEntity(block)) {
                 SignTweaks.signPlaceOnBlockEntityTime = System.currentTimeMillis();
             }
         }
     }
 
     @Unique
-    private boolean isValidBlockEntity(Block block) {
+    private boolean signTweaks$clickThroughSign(
+            BlockHitResult blockHitResult,
+            BlockPos hitBlockPos,
+            BlockState hitBlockState,
+            Block hitBlock
+    ) {
+        // must be enabled
+        if (!options().clickThroughSigns)
+            return false;
+
+        // must not be holding dye/ink/honeycomb
+        // (can't use while sneaking so have to allow usage while standing)
+        if (player.getItemInHand(InteractionHand.MAIN_HAND).getItem() instanceof SignApplicator)
+            return false;
+
+        // must be targeting a wall sign
+        if (!(hitBlock instanceof WallSignBlock))
+            return false;
+
+        // get the block that the sign is on
+        BlockPos wallBlockPos = hitBlockPos.offset(hitBlockState.getValue(WallSignBlock.FACING)
+                .getOpposite()
+                .getUnitVec3i());
+        BlockState wallBlockState = level.getBlockState(wallBlockPos);
+        Block wallBlock = wallBlockState.getBlock();
+
+        // must be on a block entity that it makes sense to click through to
+        if (!signTweaks$isClickableBlockEntity(wallBlock))
+            return false;
+
+        // must not be sneaking
+        if (player.isSteppingCarefully()) {
+            // record the time to allow overriding the editor condition in
+            // ClientPacketListenerMixin#wrapOpenTextEdit
+            SignTweaks.avoidClickThroughTime = System.currentTimeMillis();
+            return false;
+        }
+
+        // must not have ClickThrough Plus
+        if (PlatformServices.getInstance().isModLoaded("clickthrough"))
+            return false;
+
+        // retarget
+        hitResult = new BlockHitResult(
+                blockHitResult.getLocation(),
+                blockHitResult.getDirection(),
+                wallBlockPos,
+                false
+        );
+        return true;
+    }
+
+    @Unique
+    private boolean signTweaks$clickThroughBanner(
+            BlockHitResult blockHitResult,
+            BlockPos hitBlockPos,
+            BlockState hitBlockState,
+            Block hitBlock
+    ) {
+        // must be enabled
+        if (!options().clickThroughBanners)
+            return false;
+
+        // must not be sneaking
+        if (player.isSteppingCarefully())
+            return false;
+
+        // must be targeting a wall banner
+        if (!(hitBlock instanceof WallBannerBlock))
+            return false;
+
+        // get the block that the banner is on
+        BlockPos wallBlockPos = hitBlockPos.offset(hitBlockState.getValue(WallBannerBlock.FACING)
+                .getOpposite()
+                .getUnitVec3i());
+        BlockState wallBlockState = level.getBlockState(wallBlockPos);
+        Block wallBlock = wallBlockState.getBlock();
+
+        // must be on a block entity that it makes sense to click through to
+        if (!signTweaks$isClickableBlockEntity(wallBlock))
+            return false;
+
+        // retarget
+        hitResult = new BlockHitResult(
+                blockHitResult.getLocation(),
+                blockHitResult.getDirection(),
+                wallBlockPos,
+                false
+        );
+        return true;
+    }
+
+    @Unique
+    private boolean signTweaks$clickThroughHangingEntity(
+            EntityHitResult entityHitResult,
+            BlockPos hitEntityPos,
+            Entity hitEntity
+    ) {
+        // must be enabled
+        if (!options().clickThroughHangingEntities)
+            return false;
+
+        // must not be sneaking
+        if (player.isSteppingCarefully())
+            return false;
+
+        // must be targeting a hanging entity
+        if (!(hitEntity instanceof HangingEntity hangingEntity))
+            return false;
+
+        // must not have ClickThrough Plus
+        if (PlatformServices.getInstance().isModLoaded("clickthrough"))
+            return false;
+
+        // get the block that the entity is on
+        BlockPos wallBlockPos = hitEntityPos.offset(hitEntity.getDirection()
+                .getOpposite()
+                .getUnitVec3i());
+        BlockState wallBlockState = level.getBlockState(wallBlockPos);
+        Block wallBlock = wallBlockState.getBlock();
+
+        // must be on a block entity that it makes sense to click through to
+        if (!signTweaks$isClickableBlockEntity(wallBlock))
+            return false;
+
+        // retarget
+        hitResult = new BlockHitResult(
+                entityHitResult.getLocation(),
+                hangingEntity.getDirection().getOpposite(),
+                wallBlockPos,
+                false
+        );
+        return true;
+    }
+
+    @Unique
+    private boolean signTweaks$isClickableBlockEntity(Block block) {
         if (!(block instanceof BaseEntityBlock))
             return false;
 
-        // generally, signs + anything that doesn't have a right-click interaction
+        // generally, exclude anything that can be clicked through plus anything
+        // that doesn't have a right-click interaction
         if (block instanceof AbstractBannerBlock
                 || block instanceof AbstractSkullBlock
                 || block instanceof ConduitBlock

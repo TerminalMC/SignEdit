@@ -141,26 +141,47 @@ public class ClothScreenProvider {
                 .build());
 
         general.addEntry(eb.startBooleanToggle(
-                        localized("option", "general.editWhenPlacingOnBlockEntity"),
+                        localized("option", "general.blockEntitySneakEditOverride"),
                         options.blockEntitySneakEditOverride
                 )
                 .setTooltip(localized(
                         "option",
-                        "general.editWhenPlacingOnBlockEntity.tooltip",
+                        "general.blockEntitySneakEditOverride.tooltip",
                         localized("option", "general.editCondition"),
                         localized("option", "general.editCondition." + EditCondition.NOT_SNEAKING)
                 ))
-                .setDefaultValue(Options.editWhenPlacingOnBlockEntityDefault)
+                .setDefaultValue(Options.blockEntitySneakEditOverrideDefault)
                 .setSaveConsumer(val -> options.blockEntitySneakEditOverride = val)
                 .build());
 
-        general.addEntry(eb.startBooleanToggle(
-                        localized("option", "general.clickThrough"),
-                        options.clickThrough
+        ConfigCategory clickThrough =
+                builder.getOrCreateCategory(localized("option", "clickThrough"));
+
+        clickThrough.addEntry(eb.startBooleanToggle(
+                        localized("option", "clickThrough.clickThroughSigns"),
+                        options.clickThroughSigns
                 )
-                .setTooltip(localized("option", "general.clickThrough.tooltip"))
-                .setDefaultValue(Options.clickThroughDefault)
-                .setSaveConsumer(val -> options.clickThrough = val)
+                .setTooltip(localized("option", "clickThrough.clickThroughSigns.tooltip"))
+                .setDefaultValue(Options.clickThroughSignsDefault)
+                .setSaveConsumer(val -> options.clickThroughSigns = val)
+                .build());
+
+        clickThrough.addEntry(eb.startBooleanToggle(
+                        localized("option", "clickThrough.clickThroughBanners"),
+                        options.clickThroughBanners
+                )
+                .setTooltip(localized("option", "clickThrough.clickThroughBanners.tooltip"))
+                .setDefaultValue(Options.clickThroughBannersDefault)
+                .setSaveConsumer(val -> options.clickThroughBanners = val)
+                .build());
+
+        clickThrough.addEntry(eb.startBooleanToggle(
+                        localized("option", "clickThrough.clickThroughHangingEntities"),
+                        options.clickThroughHangingEntities
+                )
+                .setTooltip(localized("option", "clickThrough.clickThroughHangingEntities.tooltip"))
+                .setDefaultValue(Options.clickThroughHangingEntitiesDefault)
+                .setSaveConsumer(val -> options.clickThroughHangingEntities = val)
                 .build());
 
         ConfigCategory autoFill = builder.getOrCreateCategory(localized("option", "autoFill"));
