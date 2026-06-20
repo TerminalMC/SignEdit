@@ -41,7 +41,11 @@ public class ConfigScreenProvider {
             return ClothScreenProvider.getConfigScreen(parent);
 //            return new DisabledScreen(parent);
         } catch (NoClassDefFoundError ignored) {
-            return new BackupScreen(parent, "installCloth", "https://modrinth.com/project/9s6osm5g");
+            return new BackupScreen(
+                    parent,
+                    "installCloth",
+                    "https://modrinth.com/project/9s6osm5g"
+            );
         }
     }
 

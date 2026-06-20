@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.102.1
+
+- Reset `mc` version counter to 1 at mc1.0.0
+
 ## 2.2.0
 
 - Rebranded to "Sign Tweaks".

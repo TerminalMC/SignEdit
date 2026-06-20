@@ -65,7 +65,7 @@ public class SignTweaksNeoForge {
     static class ClientEventHandler {
 
         /**
-         * Registers client commands.
+         * Registers all client commands.
          */
         @SubscribeEvent
         public static void onRegisterClientCommands(RegisterClientCommandsEvent event) {
