@@ -25,10 +25,12 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.components.events.GuiEventListener;
+import net.minecraft.client.gui.font.TextFieldHelper;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.AbstractSignEditScreen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.block.entity.SignBlockEntity;
+import net.minecraft.world.level.block.entity.SignTextSlot;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -56,28 +58,27 @@ public abstract class AbstractSignEditScreenMixin extends Screen implements ISig
     @Shadow
     public abstract void onClose();
 
-    @Unique
-    private boolean signTweaks$isReloading;
+    @Shadow
+    @Final
+    private TextFieldHelper signField;
 
     /**
      * On creation of an {@link AbstractSignEditScreen}, resets the value of
      * {@link SignTweaks#enhancedEditing} to the default value and stores the original sign text.
      */
     @Inject(
-            method = "<init>(Lnet/minecraft/world/level/block/entity/SignBlockEntity;ZZLnet/minecraft/network/chat/Component;)V",
+            method = "<init>(Lnet/minecraft/world/level/block/entity/SignBlockEntity;Lnet/minecraft/world/level/block/entity/SignTextSlot;ZLnet/minecraft/network/chat/Component;)V",
             at = @At("RETURN")
     )
     private void afterConstructor(
             SignBlockEntity sign,
-            boolean isFrontText,
+            SignTextSlot slot,
             boolean shouldFilter,
             Component title,
             CallbackInfo ci
     ) {
-        SignTweaks.enhancedEditing = options().useEnhancedEditor;
-
-        SignTweaks.originalLines = new String[messages.length];
-        System.arraycopy(messages, 0, SignTweaks.originalLines, 0, messages.length);
+        SignTweaks.originalLines.clear();
+        SignTweaks.originalLines.addAll(Arrays.asList(messages));
     }
 
     /**
@@ -204,8 +205,8 @@ public abstract class AbstractSignEditScreenMixin extends Screen implements ISig
     @Unique
     private void signEdit$copyText() {
         if (signEdit$hasText()) {
-            SignTweaks.copiedLines = new String[messages.length];
-            System.arraycopy(messages, 0, SignTweaks.copiedLines, 0, messages.length);
+            SignTweaks.copiedLines.clear();
+            SignTweaks.copiedLines.addAll(Arrays.asList(messages));
             signEdit$finish();
         }
     }
@@ -215,14 +216,10 @@ public abstract class AbstractSignEditScreenMixin extends Screen implements ISig
      */
     @Unique
     private void signEdit$replaceText() {
-        if (SignTweaks.copiedLines != null) {
-            System.arraycopy(
-                    SignTweaks.copiedLines,
-                    0,
-                    messages,
-                    0,
-                    Math.min(SignTweaks.copiedLines.length, messages.length)
-            );
+        if (!SignTweaks.copiedLines.isEmpty()) {
+            for (int i = 0; i < messages.length && i < SignTweaks.copiedLines.size(); i++) {
+                messages[i] = SignTweaks.copiedLines.get(i);
+            }
             signEdit$finish();
         }
     }
@@ -244,14 +241,10 @@ public abstract class AbstractSignEditScreenMixin extends Screen implements ISig
     @Unique
     @Override
     public void signEdit$revertText(boolean isManual) {
-        if (SignTweaks.originalLines != null) {
-            System.arraycopy(
-                    SignTweaks.originalLines,
-                    0,
-                    messages,
-                    0,
-                    Math.min(SignTweaks.originalLines.length, messages.length)
-            );
+        if (!SignTweaks.originalLines.isEmpty()) {
+            for (int i = 0; i < messages.length && i < SignTweaks.originalLines.size(); i++) {
+                messages[i] = SignTweaks.originalLines.get(i);
+            }
             if (isManual) {
                 signEdit$finish();
             }

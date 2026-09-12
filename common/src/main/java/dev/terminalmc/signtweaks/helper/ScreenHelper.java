@@ -16,6 +16,7 @@
 
 package dev.terminalmc.signtweaks.helper;
 
+import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.input.KeyEvent;
@@ -23,7 +24,6 @@ import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.client.renderer.blockentity.AbstractSignRenderer;
 import net.minecraft.world.level.block.entity.SignBlockEntity;
 import net.minecraft.world.level.block.entity.SignText;
-import org.lwjgl.glfw.GLFW;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,13 +36,13 @@ public class ScreenHelper {
      * All other custom actions are to be handled by {@link FieldHelper#keyPressed}.
      */
     public static boolean keyPressed(String[] lines, FieldHelper field, int line, KeyEvent event) {
-        return switch (event.key()) {
-            case GLFW.GLFW_KEY_UP -> {
+        return switch (event.input()) {
+            case InputConstants.KEY_UP -> {
                 // Shift cursor to end of previous line (wrapped)
                 field.cursorToLine(Math.floorMod(line - 1, lines.length), event.hasShiftDown());
                 yield true;
             }
-            case GLFW.GLFW_KEY_DOWN -> {
+            case InputConstants.KEY_DOWN -> {
                 // Shift cursor to end of next line (wrapped)
                 field.cursorToLine(Math.floorMod(line + 1, lines.length), event.hasShiftDown());
                 yield true;

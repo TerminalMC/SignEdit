@@ -26,9 +26,10 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.decoration.HangingEntity;
+import net.minecraft.world.item.HangingSignItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.SignApplicator;
-import net.minecraft.world.item.SignItem;
+import net.minecraft.world.item.StandingAndWallBlockItem;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
@@ -109,7 +110,9 @@ public abstract class MinecraftMixin {
             @Local(name = "heldItem") ItemStack heldItem,
             @Local(name = "blockHit") BlockHitResult blockHit
     ) {
-        if (heldItem.getItem() instanceof SignItem) {
+        if (heldItem.getItem() instanceof HangingSignItem
+                || (heldItem.getItem() instanceof StandingAndWallBlockItem item
+                && item.getBlock() instanceof SignBlock)) {
             SignTweaks.signPlaceTime = System.currentTimeMillis();
 
             BlockPos blockPos = blockHit.getBlockPos();

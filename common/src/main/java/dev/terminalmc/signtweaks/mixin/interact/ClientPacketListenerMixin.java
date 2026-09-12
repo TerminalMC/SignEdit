@@ -25,8 +25,11 @@ import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.protocol.game.ClientboundOpenSignEditorPacket;
 import net.minecraft.network.protocol.game.ServerboundSignUpdatePacket;
 import net.minecraft.world.level.block.entity.SignBlockEntity;
+import net.minecraft.world.level.block.entity.SignTextSlot;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
+
+import java.util.Arrays;
 
 import static dev.terminalmc.signtweaks.config.Config.options;
 
@@ -41,13 +44,13 @@ public abstract class ClientPacketListenerMixin {
             method = "handleOpenSignEditor",
             at = @At(
                     value = "INVOKE",
-                    target = "Lnet/minecraft/client/player/LocalPlayer;openTextEdit(Lnet/minecraft/world/level/block/entity/SignBlockEntity;Z)V"
+                    target = "Lnet/minecraft/client/player/LocalPlayer;openTextEdit(Lnet/minecraft/world/level/block/entity/SignBlockEntity;Lnet/minecraft/world/level/block/entity/SignTextSlot;)V"
             )
     )
     private void wrapOpenTextEdit(
             LocalPlayer instance,
             SignBlockEntity sign,
-            boolean isFrontText,
+            SignTextSlot slot,
             Operation<Void> original
     ) {
         long timeNow = System.currentTimeMillis();
@@ -64,11 +67,8 @@ public abstract class ClientPacketListenerMixin {
                 if (connection != null) {
                     connection.send(new ServerboundSignUpdatePacket(
                             sign.getBlockPos(),
-                            isFrontText,
-                            options().autoFillLines[0],
-                            options().autoFillLines[1],
-                            options().autoFillLines[2],
-                            options().autoFillLines[3]
+                            Arrays.asList(options().autoFillLines),
+                            slot
                     ));
                 }
                 return;
@@ -102,7 +102,7 @@ public abstract class ClientPacketListenerMixin {
         };
 
         if (allow) {
-            original.call(instance, sign, isFrontText);
+            original.call(instance, sign, slot);
         }
     }
 }

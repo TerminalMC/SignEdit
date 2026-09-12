@@ -124,7 +124,7 @@ public class ClothScreenProvider {
                         "general.revertOnEscape.tooltip",
                         Component.translatable("key.keyboard.escape").getString(),
                         CommonComponents.GUI_DONE.getString()
-                        ))
+                ))
                 .setDefaultValue(Config.Options.revertOnEscapeDefault)
                 .setSaveConsumer(val -> options.revertOnEscape = val)
                 .build());
@@ -224,19 +224,16 @@ public class ClothScreenProvider {
                 .setEnumNameProvider(val -> {
                     if (val != options.lastAutoFillAction && val instanceof ConfigAction ca) {
                         options.lastAutoFillAction = ca;
-                        if (SignTweaks.copiedLines != null) {
-                            for (int i = 0; i < options.autoFillLines.length; i++) {
-                                if (i < SignTweaks.copiedLines.length) {
-                                    options.autoFillLines[i] = SignTweaks.copiedLines[i];
-                                }
-                                else {
-                                    options.autoFillLines[i] = "";
-                                }
+                        for (int i = 0; i < options.autoFillLines.length; i++) {
+                            if (i < SignTweaks.copiedLines.size()) {
+                                options.autoFillLines[i] = SignTweaks.copiedLines.get(i);
+                            } else {
+                                options.autoFillLines[i] = "";
                             }
-                            if (instance != null) {
-                                instance.save();
-                                Minecraft.getInstance().gui.setScreen(parent);
-                            }
+                        }
+                        if (instance != null) {
+                            instance.save();
+                            Minecraft.getInstance().gui.setScreen(parent);
                         }
                     }
                     return localized("option", "autoFill.useCopiedLines.value");
@@ -244,7 +241,6 @@ public class ClothScreenProvider {
                 .setDefaultValue(options.lastAutoFillAction)
                 .setSaveConsumer(val -> {
                 })
-                .setRequirement(() -> SignTweaks.copiedLines != null)
                 .build());
 
         Screen screen = builder.build();

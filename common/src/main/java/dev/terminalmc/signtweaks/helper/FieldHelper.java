@@ -16,13 +16,13 @@
 
 package dev.terminalmc.signtweaks.helper;
 
+import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.font.TextFieldHelper;
 import net.minecraft.client.input.CharacterEvent;
 import net.minecraft.client.input.KeyEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.lwjgl.glfw.GLFW;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,7 +43,7 @@ public class FieldHelper extends TextFieldHelper {
             Supplier<String> getClipboard,
             Consumer<String> setClipboard,
             Supplier<Integer> getMaxWidth,
-            Integer lineCount
+            int lineCount
     ) {
         super(
                 () -> {
@@ -68,6 +68,10 @@ public class FieldHelper extends TextFieldHelper {
         this.getMaxWidthFn = getMaxWidth;
         this.lineCount = lineCount;
         this.setCursorToEnd();
+    }
+
+    public void setText(String[] text) {
+
     }
 
     /**
@@ -139,14 +143,14 @@ public class FieldHelper extends TextFieldHelper {
                     return new LinePoint(line + 1, 0);
                 } else //noinspection ConstantValue
                     if (line > 0
-                        && point == 0
-                        && !String.valueOf(text.charAt(idx - 1)).equals("\n")
-                        && point++ > 0
-                        && idx++ == targetIdx) {
-                    return new LinePoint(line, point + 1);
-                } else if (idx++ == targetIdx) {
-                    return new LinePoint(line, point);
-                }
+                            && point == 0
+                            && !String.valueOf(text.charAt(idx - 1)).equals("\n")
+                            && point++ > 0
+                            && idx++ == targetIdx) {
+                        return new LinePoint(line, point + 1);
+                    } else if (idx++ == targetIdx) {
+                        return new LinePoint(line, point);
+                    }
             }
         }
 
@@ -288,28 +292,28 @@ public class FieldHelper extends TextFieldHelper {
             return true;
         } else {
             CursorStep step = event.hasControlDown() ? CursorStep.WORD : CursorStep.CHARACTER;
-            return switch (event.key()) {
-                case GLFW.GLFW_KEY_ENTER, GLFW.GLFW_KEY_KP_ENTER -> {
+            return switch (event.input()) {
+                case InputConstants.KEY_RETURN, InputConstants.KEY_NUMPADENTER -> {
                     insertText("\n");
                     yield true;
                 }
-                case GLFW.GLFW_KEY_BACKSPACE -> {
+                case InputConstants.KEY_BACKSPACE -> {
                     removeFromCursor(-1, step);
                     yield true;
                 }
-                case GLFW.GLFW_KEY_DELETE -> {
+                case InputConstants.KEY_DELETE -> {
                     removeFromCursor(1, step);
                     yield true;
                 }
-                case GLFW.GLFW_KEY_LEFT -> {
+                case InputConstants.KEY_LEFT -> {
                     moveBy(-1, event.hasShiftDown(), step);
                     yield true;
                 }
-                case GLFW.GLFW_KEY_RIGHT -> {
+                case InputConstants.KEY_RIGHT -> {
                     moveBy(1, event.hasShiftDown(), step);
                     yield true;
                 }
-                case GLFW.GLFW_KEY_HOME -> {
+                case InputConstants.KEY_HOME -> {
                     // Scan backwards to the previous linebreak, ignoring an adjacent one
                     int start = getCursorPos();
                     for (int i = start; i >= 0; i--) {
@@ -324,7 +328,7 @@ public class FieldHelper extends TextFieldHelper {
                     setCursorToStart(event.hasShiftDown());
                     yield true;
                 }
-                case GLFW.GLFW_KEY_END -> {
+                case InputConstants.KEY_END -> {
                     // Scan forwards to the next linebreak, ignoring an adjacent one
                     int max = cachedText.length();
                     int start = getCursorPos();

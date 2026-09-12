@@ -16,12 +16,12 @@
 
 package dev.terminalmc.signtweaks.mixin.input;
 
-import com.mojang.blaze3d.platform.Window;
 import dev.terminalmc.signtweaks.SignTweaks;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.world.level.block.entity.SignBlockEntity;
+import net.minecraft.world.level.block.entity.SignTextSlot;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -43,8 +43,7 @@ public abstract class LocalPlayerMixin {
             method = "openTextEdit",
             at = @At("HEAD")
     )
-    private void onOpenTextEdit(SignBlockEntity sign, boolean isFrontText, CallbackInfo ci) {
-        Window window = Minecraft.getInstance().getWindow();
+    private void onOpenTextEdit(SignBlockEntity sign, SignTextSlot slot, CallbackInfo ci) {
         SignTweaks.downKeys.clear();
         if (options().blockHeldKeys) {
             for (KeyMapping keyMapping : Minecraft.getInstance().options.keyMappings) {

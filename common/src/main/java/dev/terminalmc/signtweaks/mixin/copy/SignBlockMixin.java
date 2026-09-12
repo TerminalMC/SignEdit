@@ -26,12 +26,15 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.SignBlock;
 import net.minecraft.world.level.block.entity.SignBlockEntity;
+import net.minecraft.world.level.block.entity.SignTextSlot;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+
+import java.util.List;
 
 import static dev.terminalmc.signtweaks.util.Localization.localized;
 
@@ -58,12 +61,9 @@ public abstract class SignBlockMixin {
         if (level.getBlockEntity(pos) instanceof SignBlockEntity sign
                 && sign.isWaxed()
                 && itemStack.isEmpty()) {
-            Component[] textLines = sign.getFrontText().getMessages(false);
-            String[] lines = new String[textLines.length];
-            for (int i = 0; i < textLines.length; i++) {
-                lines[i] = textLines[i].getString();
-            }
-            SignTweaks.copiedLines = lines;
+            List<Component> textLines = sign.getText(SignTextSlot.FRONT).getMessages(false);
+            SignTweaks.copiedLines.clear();
+            SignTweaks.copiedLines.addAll(textLines.stream().map(Component::getString).toList());
             player.sendOverlayMessage(localized("message", "copied"));
         }
     }

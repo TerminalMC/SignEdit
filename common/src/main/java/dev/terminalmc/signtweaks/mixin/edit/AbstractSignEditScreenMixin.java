@@ -19,6 +19,7 @@ package dev.terminalmc.signtweaks.mixin.edit;
 import com.llamalad7.mixinextras.injector.wrapmethod.WrapMethod;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
+import com.mojang.blaze3d.platform.InputConstants;
 import dev.terminalmc.signtweaks.SignTweaks;
 import dev.terminalmc.signtweaks.helper.FieldHelper;
 import dev.terminalmc.signtweaks.helper.ScreenHelper;
@@ -35,9 +36,9 @@ import net.minecraft.client.input.KeyEvent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.block.entity.SignBlockEntity;
 import net.minecraft.world.level.block.entity.SignText;
+import net.minecraft.world.level.block.entity.SignTextSlot;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Vector2f;
-import org.lwjgl.glfw.GLFW;
 import org.objectweb.asm.Opcodes;
 import org.spongepowered.asm.mixin.*;
 import org.spongepowered.asm.mixin.injection.At;
@@ -56,16 +57,15 @@ public abstract class AbstractSignEditScreenMixin extends Screen {
     }
 
     @Shadow
-    private SignText text;
-
-    @Shadow
     @Final
     private String[] messages;
 
     @Shadow
     public abstract void onClose();
 
+    @SuppressWarnings("ShadowModifiers")
     @Shadow
+    @Mutable
     @Nullable
     private TextFieldHelper signField;
 
@@ -78,7 +78,11 @@ public abstract class AbstractSignEditScreenMixin extends Screen {
 
     @Shadow
     @Final
-    private boolean isFrontText;
+    private SignTextSlot slot;
+
+    @Shadow
+    @Final
+    private SignText.Mutable text;
 
     @Unique
     private static boolean signEdit$cancelKeyPressed;
@@ -90,7 +94,7 @@ public abstract class AbstractSignEditScreenMixin extends Screen {
      * Replaces the existing {@link TextFieldHelper} with a new {@link FieldHelper}.
      */
     @WrapOperation(
-            method = "init",
+            method = "<init>(Lnet/minecraft/world/level/block/entity/SignBlockEntity;Lnet/minecraft/world/level/block/entity/SignTextSlot;ZLnet/minecraft/network/chat/Component;)V",
             at = @At(
                     value = "FIELD",
                     target = "Lnet/minecraft/client/gui/screens/inventory/AbstractSignEditScreen;signField:Lnet/minecraft/client/gui/font/TextFieldHelper;",
@@ -102,6 +106,8 @@ public abstract class AbstractSignEditScreenMixin extends Screen {
             TextFieldHelper value,
             Operation<Void> original
     ) {
+        SignTweaks.enhancedEditing = options().useEnhancedEditor;
+
         if (!SignTweaks.enhancedEditing) {
             original.call(instance, value);
             return;
@@ -120,6 +126,24 @@ public abstract class AbstractSignEditScreenMixin extends Screen {
         );
     }
 
+    @Inject(
+            method = "init",
+            at = @At("RETURN")
+    )
+    private void afterInit(CallbackInfo ci) {
+        // mc26.3 no longer recreates the text field on init, but we still
+        // need to do it to reset state when replacing/erasing/inserting
+        FieldHelper.cachedText = null;
+        this.signField = new FieldHelper(
+                () -> messages,
+                this::signEdit$setMessages,
+                TextFieldHelper.createClipboardGetter(Minecraft.getInstance()),
+                TextFieldHelper.createClipboardSetter(Minecraft.getInstance()),
+                sign::getMaxTextLineWidth,
+                messages.length
+        );
+    }
+
     /**
      * Updates the sign text.
      */
@@ -127,9 +151,9 @@ public abstract class AbstractSignEditScreenMixin extends Screen {
     private void signEdit$setMessages(String[] newMessages) {
         for (int i = 0; i < newMessages.length; i++) {
             messages[i] = newMessages[i];
-            text.setMessage(i, Component.literal(newMessages[i]));
+            text.setLine(i, Component.literal(newMessages[i]));
         }
-        sign.setText(text, isFrontText);
+        sign.setText(text.asImmutable(), slot);
     }
 
     /**
@@ -160,7 +184,7 @@ public abstract class AbstractSignEditScreenMixin extends Screen {
                 return true;
         }
 
-        if (event.key() != GLFW.GLFW_KEY_SPACE && event.key() != GLFW.GLFW_KEY_TAB)
+        if (event.input() != InputConstants.KEY_SPACE && event.input() != InputConstants.KEY_TAB)
             return super.keyPressed(event);
 
         return false;
@@ -260,7 +284,14 @@ public abstract class AbstractSignEditScreenMixin extends Screen {
         assert signField != null;
         FieldHelper helper = (FieldHelper) signField;
         if (options().showLineBreakIndicator)
-            ScreenHelper.renderLinebreaks(graphics, font, helper, sign, text, messages);
+            ScreenHelper.renderLinebreaks(
+                    graphics,
+                    font,
+                    helper,
+                    sign,
+                    text.asImmutable(),
+                    messages
+            );
         ScreenHelper.renderHighlight(graphics, font, helper, sign, messages);
     }
 }

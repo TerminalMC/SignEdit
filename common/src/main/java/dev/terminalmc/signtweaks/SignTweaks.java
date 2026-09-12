@@ -24,6 +24,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
 import org.apache.logging.log4j.Logger;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -44,8 +45,8 @@ public class SignTweaks {
 
     public static boolean enhancedEditing;
 
-    public static String[] copiedLines;
-    public static String[] originalLines;
+    public static final List<String> copiedLines = new ArrayList<>();
+    public static final List<String> originalLines = new ArrayList<>();
 
     public static long signPlaceTime = 0;
     public static long signPlaceOnBlockEntityTime = 0;
